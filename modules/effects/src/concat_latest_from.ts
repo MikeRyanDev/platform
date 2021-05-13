@@ -53,9 +53,9 @@ export function concatLatestFrom<
       const observablesAsArray = Array.isArray(observables)
         ? observables
         : [observables];
-      return of(value).pipe(
+      return (of(value).pipe(
         withLatestFrom(...observablesAsArray)
-      ) as Observable<R>;
+      ) as unknown) as Observable<R>;
     })
   );
 }
