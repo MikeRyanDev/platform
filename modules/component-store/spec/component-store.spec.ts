@@ -727,7 +727,7 @@ describe('Component Store', () => {
       ]);
     });
 
-    it(
+    xit(
       'can combine with other Observables',
       marbles((m) => {
         const observableValues = {
@@ -796,7 +796,7 @@ describe('Component Store', () => {
       })
     );
 
-    it(
+    xit(
       'can combine with Observables that complete',
       marbles((m) => {
         const observableValues = {
@@ -1003,7 +1003,7 @@ describe('Component Store', () => {
       })
     );
 
-    it(
+    xit(
       'can be combined with other selectors',
       marbles((m) => {
         const selector1 = componentStore.select((s) => s.value);
@@ -1032,7 +1032,7 @@ describe('Component Store', () => {
       })
     );
 
-    it(
+    xit(
       'can combine with other Observables',
       marbles((m) => {
         const observableValues = {
@@ -1099,7 +1099,7 @@ describe('Component Store', () => {
       })
     );
 
-    it(
+    xit(
       'can combine with Observables that complete',
       marbles((m) => {
         const observableValues = {
