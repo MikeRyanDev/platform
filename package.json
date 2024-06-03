@@ -66,6 +66,7 @@
     ]
   },
   "dependencies": {
+    "@analogjs/platform": "^1.4.0",
     "@angular/animations": "18.0.0",
     "@angular/cdk": "18.0.0",
     "@angular/common": "18.0.0",
