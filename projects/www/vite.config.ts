@@ -1,7 +1,8 @@
 /// <reference types="vitest" />
 import analog from '@analogjs/platform';
-import { defineConfig, Plugin, splitVendorChunkPlugin } from 'vite';
+import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import ngrxStackblitzPlugin from './src/tools/vite-ngrx-stackblits.plugin';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -18,6 +19,10 @@ export default defineConfig(({ mode }) => {
       fs: {
         allow: ['.'],
       },
+      headers: {
+        'Cross-Origin-Embedder-Policy': 'require-corp',
+        'Cross-Origin-Opener-Policy': 'same-origin',
+      },
     },
     plugins: [
       analog({
@@ -28,6 +33,7 @@ export default defineConfig(({ mode }) => {
       }),
       nxViteTsPaths(),
       splitVendorChunkPlugin(),
+      ngrxStackblitzPlugin(),
     ],
     test: {
       globals: true,

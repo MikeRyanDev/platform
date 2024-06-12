@@ -5,7 +5,6 @@ import {
   ElementRef,
   Injector,
   Input,
-  forwardRef,
   inject,
   viewChild,
 } from '@angular/core';
@@ -14,27 +13,35 @@ import { RouterLink } from '@angular/router';
 import { CanonicalReference, ParsedCanonicalReference } from '@ngrx-io/shared';
 import { EMPTY, Observable, fromEvent, switchMap, takeUntil, tap } from 'rxjs';
 import {
-  SYMBOl_POPOVER_CANONICAL_REFERENCE,
+  SYMBOl_POPOVER_REF,
   SymbolPopoverComponent,
 } from './symbol-popover.component';
+import { ReferenceService } from '@ngrx-io/app/reference/reference.service';
 
 @Component({
   selector: 'ngrx-symbol-link',
   standalone: true,
   imports: [RouterLink, SymbolPopoverComponent],
-  template: `@if (isPrivate) {{{ parsedReference.name }}} @else if
-    (shouldUseExternalLink) {<a [href]="url" target="_blank">{{
-      parsedReference.name
-    }}</a
-    >} @else {<a [routerLink]="url" #internalSymbolLink>{{
-      parsedReference.name
-    }}</a
+  // Spacing is intentional to avoid unnecessary whitespace in the output
+  template: `@if (isPrivate) {{{ name }}} @else if (shouldUseExternalLink) {<a
+      [href]="url"
+      target="_blank"
+      >{{ name }}</a
+    >} @else {<a [routerLink]="url" #internalSymbolLink>{{ name }}</a
     >}`,
-  styles: [``],
+  styles: [
+    `
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    `,
+  ],
 })
 export class SymbolLinkComponent {
   injector = inject(Injector);
   overlay = inject(Overlay);
+  referenceService = inject(ReferenceService);
   internalSymbolLink =
     viewChild<ElementRef<HTMLAnchorElement>>('internalSymbolLink');
   url: string = '';
@@ -71,6 +78,14 @@ export class SymbolLinkComponent {
     }
   }
 
+  get name() {
+    if (this.parsedReference.isPrivate) {
+      return this.parsedReference.name.slice(1);
+    }
+
+    return this.parsedReference.name;
+  }
+
   constructor() {
     toObservable(this.internalSymbolLink)
       .pipe(
@@ -80,7 +95,12 @@ export class SymbolLinkComponent {
           const link = linkRef.nativeElement;
 
           return fromEvent(link, 'mouseenter').pipe(
-            switchMap(() => {
+            switchMap(() =>
+              this.referenceService.loadFromCanonicalReference(
+                this.parsedReference.referenceString
+              )
+            ),
+            switchMap((apiMemberSummary) => {
               const overlay = this.overlay.create({
                 positionStrategy: this.overlay
                   .position()
@@ -95,14 +115,13 @@ export class SymbolLinkComponent {
                   ]),
                 hasBackdrop: false,
                 scrollStrategy: this.overlay.scrollStrategies.close(),
-                panelClass: 'symbol-popover',
               });
               const injector = Injector.create({
                 parent: this.injector,
                 providers: [
                   {
-                    provide: SYMBOl_POPOVER_CANONICAL_REFERENCE,
-                    useValue: this.parsedReference.referenceString,
+                    provide: SYMBOl_POPOVER_REF,
+                    useValue: apiMemberSummary,
                   },
                 ],
               });

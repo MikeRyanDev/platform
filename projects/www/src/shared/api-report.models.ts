@@ -44,7 +44,7 @@ export class ParsedCanonicalReference {
   readonly index: number | undefined;
   readonly isPrivate: boolean;
 
-  constructor(readonly referenceString: string) {
+  constructor(readonly referenceString: CanonicalReference) {
     const [packagePart, restOfParts] = referenceString.split('!');
 
     this.package = packagePart === '' ? '@@internal' : packagePart;

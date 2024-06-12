@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ApiMemberSummary, MinimizedApiPackageReport } from '@ngrx-io/shared';
+import {
+  ApiMemberSummary,
+  CanonicalReference,
+  MinimizedApiPackageReport,
+  ParsedCanonicalReference,
+} from '@ngrx-io/shared';
 import { packageNames, packages } from './api-report.min.json';
 
 const modules = import.meta.glob('./**/*.json');
@@ -29,5 +34,14 @@ export class ReferenceService {
         })
         .catch(reject);
     });
+  }
+
+  loadFromCanonicalReference(
+    canonicalReference: CanonicalReference
+  ): Promise<ApiMemberSummary> {
+    const parsed = new ParsedCanonicalReference(canonicalReference);
+    const [ngrx, ...rest] = parsed.package.split('/');
+
+    return this.loadReferenceData(rest.join('/'), parsed.name);
   }
 }

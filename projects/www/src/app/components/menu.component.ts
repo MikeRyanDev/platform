@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'ngrx-menu',
   standalone: true,
-  imports: [MatIconModule, RouterModule],
+  imports: [MatIconModule, RouterLink, RouterLinkActive],
   template: `
     <a href="">
       <img src="/ngrx-logo.svg" alt="ngrx logo" width="64" />
@@ -14,15 +14,15 @@ import { RouterModule } from '@angular/router';
       <mat-icon>school</mat-icon>
       Learn
     </a>
-    <a href="" class="menu-link">
+    <a routerLink="/guide" routerLinkActive="active" class="menu-link">
       <mat-icon>menu_book</mat-icon>
-      Docs
+      Guide
     </a>
     <a href="" class="menu-link">
       <mat-icon>co_present</mat-icon>
       Workshops
     </a>
-    <a routerLink="/api" class="menu-link">
+    <a routerLink="/api" routerLinkActive="active" class="menu-link">
       <mat-icon>description</mat-icon>
       Reference
     </a>
@@ -60,7 +60,7 @@ import { RouterModule } from '@angular/router';
         font-family: 'Oxanium', sans-serif;
         font-weight: 200;
         font-size: 14px;
-        opacity: 0.72;
+        opacity: 0.64;
         transition: opacity 0.2s;
       }
 
@@ -68,7 +68,8 @@ import { RouterModule } from '@angular/router';
         color: #cf8fc5;
       }
 
-      .menu-link:hover {
+      .menu-link:hover,
+      .menu-link.active {
         opacity: 1;
       }
 

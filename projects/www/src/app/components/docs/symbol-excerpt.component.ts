@@ -40,6 +40,7 @@ import { CodeHighlightPipe } from './code-highlight.pipe';
       .links,
       code {
         font-family: 'Space Mono', monospace;
+        font-variant-ligatures: none;
         font-size: 12px;
       }
 

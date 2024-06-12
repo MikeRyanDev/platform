@@ -3,7 +3,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js/lib/core';
-import { ParsedCanonicalReference } from '@ngrx-io/shared';
+import { CanonicalReference, ParsedCanonicalReference } from '@ngrx-io/shared';
 
 export const CanonicalReferenceExtension = {
   name: 'canonicalReference',
@@ -13,7 +13,9 @@ export const CanonicalReferenceExtension = {
     const match = rule.exec(src);
     console.log({ src, match });
     if (match) {
-      const parsed = new ParsedCanonicalReference(match[0]);
+      const parsed = new ParsedCanonicalReference(
+        match[0] as CanonicalReference
+      );
       const [before, after] = src.split(match[0]);
       return {
         type: 'canonicalReference',
