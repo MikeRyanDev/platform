@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # NgRx Data FAQs
 
@@ -27,11 +27,11 @@ But you ONLY do so when you want to do something unusual … and that, by defini
 
 An **_entity_** is an object with _long-lived data values_ that you read from and write to a database.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 Operations that access the database are called **_persistence_** operations.
 
-</div>
+</ngrx-docs-alert>
 
 An _entity_ refers to some "thing" in the application domain, such as a customer.
 Such things are unique even as their values change. Accordingly each entity has a unique **_primary key_**, also called its **_identifier_**.

@@ -83,7 +83,11 @@ The generated selectors can be used independently or to create other selectors:
 import { createSelector } from '@ngrx/store';
 import { booksFeature } from './books.reducer';
 
-export const selectBookListPageViewModel = createSelector(booksFeature.selectBooks, booksFeature.selectLoading, (books, loading) => ({ books, loading }));
+export const selectBookListPageViewModel = createSelector(
+  booksFeature.selectBooks,
+  booksFeature.selectLoading,
+  (books, loading) => ({ books, loading })
+);
 ```
 
 </ngrx-code-example>
@@ -120,7 +124,12 @@ export const booksFeature = createFeature({
     }))
   ),
   extraSelectors: ({ selectQuery, selectBooks }) => ({
-    selectFilteredBooks: createSelector(selectQuery, selectBooks, (query, books) => books.filter((book) => book.title.includes(query))),
+    selectFilteredBooks: createSelector(
+      selectQuery,
+      selectBooks,
+      (query, books) =>
+        books.filter((book) => book.title.includes(query))
+    ),
   }),
 });
 ```
@@ -161,8 +170,16 @@ export const booksFeature = createFeature({
     }))
   ),
   extraSelectors: ({ selectQuery, selectBooks }) => {
-    const selectFilteredBooks = createSelector(selectQuery, selectBooks, (query, books) => books.filter((book) => book.title.includes(query)));
-    const selectFilteredBooksWithRating = createSelector(selectFilteredBooks, (books) => books.filter((book) => book.ratingsCount >= 1));
+    const selectFilteredBooks = createSelector(
+      selectQuery,
+      selectBooks,
+      (query, books) =>
+        books.filter((book) => book.title.includes(query))
+    );
+    const selectFilteredBooksWithRating = createSelector(
+      selectFilteredBooks,
+      (books) => books.filter((book) => book.ratingsCount >= 1)
+    );
 
     return { selectFilteredBooks, selectFilteredBooksWithRating };
   },

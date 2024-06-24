@@ -2,4 +2,4 @@ name: Signals Example
 description: Demonstrates signalStore
 extends: ../__base/stackblitz.yml
 files:
-  src/app.component.ts: ./src/app.component.ts
+  src/app.component.ts: './src/app.component.ts'

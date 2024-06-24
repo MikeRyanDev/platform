@@ -30,6 +30,17 @@ export default defineConfig(({ mode }) => {
           inlineStylesExtension: 'scss',
         },
         apiPrefix: '/noop',
+        nitro: {
+          preset: 'firebase',
+          firebase: {
+            nodeVersion: '20',
+            gen: 2,
+            httpsOptions: {
+              region: 'us-east1',
+              maxInstances: 100,
+            },
+          },
+        },
       }),
       nxViteTsPaths(),
       splitVendorChunkPlugin(),

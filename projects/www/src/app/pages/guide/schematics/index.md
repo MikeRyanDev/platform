@@ -28,9 +28,9 @@ Generate the initial state management and register it within the `app.module.ts`
 ng generate @ngrx/schematics:store State --root --module app.module.ts
 ```
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
   The @ngrx/schematics command prefix is only needed when the default collection isn't set.
-</div>
+</ngrx-docs-alert>
 
 ## Initial Effects Setup
 
@@ -63,7 +63,10 @@ Or, when the Angular schematic is also registered you should end up with followi
 ```json
 {
   "cli": {
-    "schematicCollections": ["@schematics/angular", "@ngrx/schematics"]
+    "schematicCollections": [
+      "@schematics/angular",
+      "@ngrx/schematics"
+    ]
   }
 }
 ```

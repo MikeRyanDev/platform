@@ -23,12 +23,12 @@ import {
         align-items: center;
         text-decoration: none;
         cursor: pointer;
-        opacity: 0.72;
-        transition: opacity 0.2s;
+        color: rgba(255, 255, 255, 0.72);
+        transition: color 0.2s;
       }
 
       a:hover {
-        opacity: 1;
+        color: rgba(207, 143, 197, 1);
       }
 
       span {

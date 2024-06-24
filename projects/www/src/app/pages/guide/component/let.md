@@ -92,11 +92,11 @@ when an observable is in a suspense state:
 </ng-template>
 ```
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 An observable is in a suspense state until it emits the first event (next, error, or complete).
 
-</div>
+</ngrx-docs-alert>
 
 In case a new observable is passed to the `*ngrxLet` directive at runtime,
 the suspense template will be displayed again until the new observable emits the first event.
@@ -110,7 +110,9 @@ This feature provides the ability to create readable templates by using aliases 
 <ng-container *ngrxLet="userForm.controls.email as email">
   <input type="text" [formControl]="email" />
 
-  <ng-container *ngIf="email.errors && (email.touched || email.dirty)">
+  <ng-container
+    *ngIf="email.errors && (email.touched || email.dirty)"
+  >
     <p *ngIf="email.errors.required">This field is required.</p>
     <p *ngIf="email.errors.email">This field must be an email.</p>
   </ng-container>

@@ -13,7 +13,13 @@ Both methods receive the store instance as input arguments.
 import { computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { interval } from 'rxjs';
-import { patchState, signalStore, withState, withHooks, withMethods } from '@ngrx/signals';
+import {
+  patchState,
+  signalStore,
+  withState,
+  withHooks,
+  withMethods,
+} from '@ngrx/signals';
 
 export const CounterStore = signalStore(
   withState({ count: 0 }),
@@ -49,7 +55,7 @@ This function receives a store instance as an input argument, returns an object 
 
 ```ts
 export const CounterStore = signalStore(
-  //_ ... _/
+  //* ... */
   withHooks((store) => {
     const logger = inject(Logger);
     let interval = 0;

@@ -1,11 +1,11 @@
 import { Component, Injector, PLATFORM_ID, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { createCustomElement } from '@angular/elements';
 import { isPlatformBrowser } from '@angular/common';
 import { MenuComponent } from './components/menu.component';
 import { MarkdownSymbolLinkComponent } from './components/docs/markdown-symbol-link.component';
 import { AlertComponent } from './components/docs/alert.component';
 import { CodeExampleComponent } from './components/docs/code-example.component';
+import { StackblitzComponent } from './components/docs/stackblitz.component';
 
 @Component({
   selector: 'www-root',
@@ -16,6 +16,7 @@ import { CodeExampleComponent } from './components/docs/code-example.component';
     MarkdownSymbolLinkComponent,
     AlertComponent,
     CodeExampleComponent,
+    StackblitzComponent,
   ],
   template: `
     <ngrx-menu></ngrx-menu>
@@ -28,8 +29,8 @@ import { CodeExampleComponent } from './components/docs/code-example.component';
       :host {
         display: block;
         position: relative;
-        width: calc(100lvw - 124px);
-        left: 124px;
+        width: calc(100lvw - 270px);
+        left: 270px;
       }
 
       ngrx-menu {
@@ -46,23 +47,31 @@ export class AppComponent {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
-      const symbolLinkElement = createCustomElement(
-        MarkdownSymbolLinkComponent,
-        {
-          injector: this.injector,
-        }
-      );
-      customElements.define('ngrx-docs-symbol-link', symbolLinkElement);
-
-      const alertElement = createCustomElement(AlertComponent, {
-        injector: this.injector,
-      });
-      customElements.define('ngrx-alert', alertElement);
-
-      const codeExampleElement = createCustomElement(CodeExampleComponent, {
-        injector: this.injector,
-      });
-      customElements.define('ngrx-code-example', codeExampleElement);
+      this.installCustomElements();
     }
+  }
+
+  async installCustomElements() {
+    const { createCustomElement } = await import('@angular/elements');
+
+    const symbolLinkElement = createCustomElement(MarkdownSymbolLinkComponent, {
+      injector: this.injector,
+    });
+    customElements.define('ngrx-docs-symbol-link', symbolLinkElement);
+
+    const alertElement = createCustomElement(AlertComponent, {
+      injector: this.injector,
+    });
+    customElements.define('ngrx-docs-alert', alertElement);
+
+    const codeExampleElement = createCustomElement(CodeExampleComponent, {
+      injector: this.injector,
+    });
+    customElements.define('ngrx-code-example', codeExampleElement);
+
+    const stackblitzElement = createCustomElement(StackblitzComponent, {
+      injector: this.injector,
+    });
+    customElements.define('ngrx-docs-stackblitz', stackblitzElement);
   }
 }

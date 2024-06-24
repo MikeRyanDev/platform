@@ -30,11 +30,11 @@ When there is an error during navigation, the router will dispatch a `ROUTER_ERR
 
 The action contains the store state before the navigation. You can use it to restore the consistency of the store.
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
-**Note:** You can also still use the action type, which was the previously defined way before action creators were introduced in NgRx. If you are looking for examples of the action types, visit the documentation for [versions 7.x and prior](https://v7.ngrx.io/guide/router-store/actions).
+You can also still use the action type, which was the previously defined way before action creators were introduced in NgRx. If you are looking for examples of the action types, visit the documentation for [versions 7.x and prior](https://v7.ngrx.io/guide/router-store/actions).
 
-</div>
+</ngrx-docs-alert>
 
 ## Order of actions
 

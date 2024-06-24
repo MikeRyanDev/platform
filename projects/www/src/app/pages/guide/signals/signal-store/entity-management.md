@@ -52,7 +52,10 @@ export class TodosComponent implements OnInit {
 
   ngOnInit() {
     // add a single entity
-    patchState(this.todoStore, addEntity({ id: 1, name: 'Car Washing', finished: false }));
+    patchState(
+      this.todoStore,
+      addEntity({ id: 1, name: 'Car Washing', finished: false })
+    );
 
     // add multiple entities
     patchState(
@@ -71,9 +74,15 @@ If you add an entity with an existing id, the original entity is not overwritten
 In this example, the todo remains as "Cat Feeding".
 
 ```typescript
-patchState(this.todoStore, addEntity({ id: 1, name: 'Cat Feeding', finished: false }));
+patchState(
+  this.todoStore,
+  addEntity({ id: 1, name: 'Cat Feeding', finished: false })
+);
 
-patchState(this.todoStore, addEntity({ id: 1, name: 'Dog Feeding', finished: false }));
+patchState(
+  this.todoStore,
+  addEntity({ id: 1, name: 'Dog Feeding', finished: false })
+);
 ```
 
 ---
@@ -83,9 +92,15 @@ Updaters `setEntity` and `setEntities` are used to add new or replace existing e
 In this example, we add a new `Todo` entity with "Cat Feeding" and replace it with "Dog Feeding".
 
 ```typescript
-patchState(this.todoStore, setEntity({ id: 1, name: 'Cat Feeding', finished: false }));
+patchState(
+  this.todoStore,
+  setEntity({ id: 1, name: 'Cat Feeding', finished: false })
+);
 
-patchState(this.todoStore, setEntity({ id: 1, name: 'Dog Feeding', finished: false }));
+patchState(
+  this.todoStore,
+  setEntity({ id: 1, name: 'Dog Feeding', finished: false })
+);
 
 // version with setEntities and two different entities
 
@@ -130,7 +145,10 @@ patchState(
   ])
 );
 
-patchState(this.todoStore, updateEntity({ id: 2, changes: { finished: true } }));
+patchState(
+  this.todoStore,
+  updateEntity({ id: 2, changes: { finished: true } })
+);
 
 patchState(this.todoStore, removeEntity(3));
 ```
@@ -244,7 +262,13 @@ patchState(
   )
 );
 
-patchState(this.todoStore, setEntity({ key: 4, name: 'Dog Feeding', finished: false }, { idKey: 'key' }));
+patchState(
+  this.todoStore,
+  setEntity(
+    { key: 4, name: 'Dog Feeding', finished: false },
+    { idKey: 'key' }
+  )
+);
 ```
 
 The `update*` and `remove*` methods, which expect an id value, automatically pick the right one. That is possible because every entity belongs to a map with its id as the key.
@@ -367,11 +391,17 @@ const TodoStore = signalStore(
 
       async setFinished(id: number) {
         await todoService.setFinished(id);
-        patchState(store, updateEntity({ id, changes: { finished: true } }));
+        patchState(
+          store,
+          updateEntity({ id, changes: { finished: true } })
+        );
       },
       async setUnfinished(id: number) {
         await todoService.setUnfinished(id);
-        patchState(store, updateEntity({ id, changes: { finished: false } }));
+        patchState(
+          store,
+          updateEntity({ id, changes: { finished: false } })
+        );
       },
     };
   }),

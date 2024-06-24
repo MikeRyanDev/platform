@@ -17,12 +17,19 @@ selector from being evaluated until the source emits a value.
 The `concatLatestFrom` operator takes an Observable factory function that returns an array of Observables, or a single Observable.
 
 <ngrx-code-example header="router.effects.ts">
+
+```ts
 import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { map, tap } from 'rxjs/operators';
 
-import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
+import {
+  Actions,
+  concatLatestFrom,
+  createEffect,
+  ofType,
+} from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { routerNavigatedAction } from '@ngrx/router-store';
 
@@ -30,24 +37,27 @@ import { selectRouteData } from './router.selectors';
 
 @Injectable()
 export class RouterEffects {
-updateTitle$ = createEffect(() =>
-this.actions$.pipe(
-ofType(routerNavigatedAction),
-concatLatestFrom(() => this.store.select(selectRouteData)),
-map(([, data]) => `Book Collection - ${data['title']}`),
-tap((title) => this.titleService.setTitle(title))
-),
-{
-dispatch: false,
-}
-);
+  updateTitle$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(routerNavigatedAction),
+        concatLatestFrom(() => this.store.select(selectRouteData)),
+        map(([, data]) => `Book Collection - ${data['title']}`),
+        tap((title) => this.titleService.setTitle(title))
+      ),
+    {
+      dispatch: false,
+    }
+  );
 
-constructor(
-private actions$: Actions,
-private store: Store,
-private titleService: Title
-) {}
+  constructor(
+    private actions$: Actions,
+    private store: Store,
+    private titleService: Title
+  ) {}
 }
+```
+
 </ngrx-code-example>
 
 ## tapResponse
@@ -58,6 +68,8 @@ An easy way to handle the response with an Observable in a safe way, without add
 - `catchError(() => EMPTY)` that ensures that the effect continues to run after the error.
 
 <ngrx-code-example header="movies.store.ts">
+
+```ts
   readonly getMovie = this.effect((movieId$: Observable<string>) => {
     return movieId$.pipe(
       // 👇 Handle race condition with the proper choice of the flattening operator.
@@ -70,11 +82,15 @@ An easy way to handle the response with an Observable in a safe way, without add
       )),
     );
   });
+```
+
 </ngrx-code-example>
 
 There is also another signature of the `tapResponse` operator that accepts the observer object as an input argument. In addition to the `next` and `error` callbacks, it provides the ability to pass `complete` and/or `finalize` callbacks:
 
 <ngrx-code-example header="movies.store.ts">
+
+```ts
   readonly getMoviesByQuery = this.effect<string>((query$) => {
     return query$.pipe(
       tap(() => this.patchState({ loading: true }),
@@ -89,13 +105,15 @@ There is also another signature of the `tapResponse` operator that accepts the o
       )
     );
   });
+```
+
 </ngrx-code-example>
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The `tapResponse` operator has been moved from `@ngrx/component-store` to `@ngrx/operators`. If you're looking for the older documentation (prior to v18), see the [v17 documentation](https://v17.ngrx.io/guide/component-store/effect#tapresponse).
 
-</div>
+</ngrx-docs-alert>
 
 ## mapResponse
 
@@ -104,21 +122,31 @@ The `mapResponse` operator is particularly useful in scenarios where you need to
 In the example below, we use `mapResponse` within an NgRx effect to handle loading movies from an API. It demonstrates how to map successful API responses to an action indicating success, and how to handle errors by dispatching an error action.
 
 <ngrx-code-example header="movies.effects.ts">
-  export const loadMovies = createEffect(
-    (actions$ = inject(Actions), moviesService = inject(MoviesService)) => {
-      return actions$.pipe(
-        ofType(MoviesPageActions.opened),
-        exhaustMap(() =>
-          moviesService.getAll().pipe(
-            mapResponse({
-              next: (movies) => MoviesApiActions.moviesLoadedSuccess({ movies }),
-              error: (error: { message: string }) =>
-                MoviesApiActions.moviesLoadedFailure({ errorMsg: error.message }),
-            })
-          )
+
+```ts
+export const loadMovies = createEffect(
+  (
+    actions$ = inject(Actions),
+    moviesService = inject(MoviesService)
+  ) => {
+    return actions$.pipe(
+      ofType(MoviesPageActions.opened),
+      exhaustMap(() =>
+        moviesService.getAll().pipe(
+          mapResponse({
+            next: (movies) =>
+              MoviesApiActions.moviesLoadedSuccess({ movies }),
+            error: (error: { message: string }) =>
+              MoviesApiActions.moviesLoadedFailure({
+                errorMsg: error.message,
+              }),
+          })
         )
-      );
-    },
-    { functional: true }
-  );
+      )
+    );
+  },
+  { functional: true }
+);
+```
+
 </ngrx-code-example>

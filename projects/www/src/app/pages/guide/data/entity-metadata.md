@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # Entity Metadata
 
@@ -20,11 +20,13 @@ Here is an example `EntityMetadataMap` similar to the one in the demo app
 that defines metadata for two entities, `Hero` and `Villain`.
 
 <ngrx-code-example header="app-entity-metadata.ts">
+
+```ts
 export const appEntityMetadata: EntityMetadataMap = {
   Hero: {
     /* optional settings */
     filterFn: nameFilter,
-    sortComparer: sortByName
+    sortComparer: sortByName,
   },
   Villain: {
     villainSelectId, // necessary if key is not `id`
@@ -32,10 +34,14 @@ export const appEntityMetadata: EntityMetadataMap = {
     /* optional settings */
     entityName: 'Villain', // optional because same as map key
     filterFn: nameAndSayingFilter,
-    entityDispatcherOptions: { optimisticAdd: true, optimisticUpdate: true }
-
-}
+    entityDispatcherOptions: {
+      optimisticAdd: true,
+      optimisticUpdate: true,
+    },
+  },
 };
+```
+
 </ngrx-code-example>
 
 ## Register metadata
@@ -98,7 +104,7 @@ The spelling and case (typically PascalCase) of the `entityName` is important fo
 
 Importantly, the default [_entity dataservice_](guide/data/entity-dataservice) creates HTTP resource URLs from the lowercase version of this name. For example, if the `entityName` is "Hero", the default data service will POST to a URL such as `'api/hero'`.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 By default it generates the _plural_ of the entity name when preparing a _collection_ resource URL.
 
@@ -108,7 +114,7 @@ It would produce `'api/heros'` for the URL to fetch _all heroes_ because it blin
 Of course the proper plural of "hero" is "hero**es**", not "hero**s**".
 You'll see how to correct this problem [below](#plurals).
 
-</div>
+</ngrx-docs-alert>
 
 ### _filterFn_
 
@@ -127,7 +133,10 @@ A filter function (see `EntityFilterFn`) takes an entity collection and the user
 Here's an example that filters for entities with a `name` property whose value contains the search string.
 
 ```typescript
-export function nameFilter(entities: { name: string }[], search: string) {
+export function nameFilter(
+  entities: { name: string }[],
+  search: string
+) {
   return entities.filter((e) => -1 < e.name.indexOf(search));
 }
 ```
@@ -142,8 +151,14 @@ The demo uses this helper to create hero and villain filters. Here's how the app
  * Filter for entities whose name or saying
  * matches the case-insensitive pattern.
  */
-export function nameAndSayingFilter(entities: Villain[], pattern: string) {
-  return PropsFilterFnFactory < Villain > ['name', 'saying'](entities, pattern);
+export function nameAndSayingFilter(
+  entities: Villain[],
+  pattern: string
+) {
+  return PropsFilterFnFactory<Villain>[('name', 'saying')](
+    entities,
+    pattern
+  );
 }
 ```
 
@@ -169,11 +184,11 @@ selectId: (villain: Villain) => villain.key;
 
 The NgRx Data library keeps the collection entities in a specific order.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 This is actually a feature of the underlying NgRx Entity library.
 
-</div>
+</ngrx-docs-alert>
 
 The default order is the order in which the entities arrive from the server.
 The entities you add are pushed to the end of the collection.
@@ -186,7 +201,10 @@ In the demo app, the villains metadata has no comparer so its entities are in de
 The hero metadata have a `sortByName` comparer that keeps the collection in alphabetical order by `name`.
 
 ```typescript
-export function sortByName(a: { name: string }, b: { name: string }): number {
+export function sortByName(
+  a: { name: string },
+  b: { name: string }
+): number {
   return a.name.localeCompare(b.name);
 }
 ```
@@ -257,11 +275,19 @@ export class AdditionalPersistenceResultHandler extends DefaultPersistenceResult
 Following the prior step, we have added the additional property to the `action.payload`. Up next we need to set it to the instance of EntityCollection in the `reducer`. In order to accomplish that, we need to create an `AdditionalEntityCollectionReducerMethods` that `extends EntityCollectionReducerMethods`. In addition, we will need to overwrite the method to match your `action`. For example, if the additional property `foo` is only available in `queryMany action(triggered by EntityCollectionService.getWithQuery)`, we can follow this approach.
 
 ```typescript
-export class AdditionalEntityCollectionReducerMethods<T> extends EntityCollectionReducerMethods<T> {
-  constructor(public entityName: string, public definition: EntityDefinition<T>) {
+export class AdditionalEntityCollectionReducerMethods<
+  T
+> extends EntityCollectionReducerMethods<T> {
+  constructor(
+    public entityName: string,
+    public definition: EntityDefinition<T>
+  ) {
     super(entityName, definition);
   }
-  protected queryManySuccess(collection: EntityCollection<T>, action: EntityAction<T[]>): EntityCollection<T> {
+  protected queryManySuccess(
+    collection: EntityCollection<T>,
+    action: EntityAction<T[]>
+  ): EntityCollection<T> {
     const ec = super.queryManySuccess(collection, action);
     if ((action.payload as any).foo) {
       // save the foo property from action.payload to entityCollection instance
@@ -289,11 +315,17 @@ Register `AdditionalEntityCollectionReducerMethods`, to do that, we need to crea
 ```typescript
 @Injectable()
 export class AdditionalEntityCollectionReducerMethodsFactory {
-  constructor(private entityDefinitionService: EntityDefinitionService) {}
+  constructor(
+    private entityDefinitionService: EntityDefinitionService
+  ) {}
   /** Create the  {EntityCollectionReducerMethods} for the named entity type */
   create<T>(entityName: string): EntityCollectionReducerMethodMap<T> {
-    const definition = this.entityDefinitionService.getDefinition<T>(entityName);
-    const methodsClass = new AdditionalEntityCollectionReducerMethods(entityName, definition);
+    const definition =
+      this.entityDefinitionService.getDefinition<T>(entityName);
+    const methodsClass = new AdditionalEntityCollectionReducerMethods(
+      entityName,
+      definition
+    );
     return methodsClass.methods;
   }
 }

@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # NgRx Data Limitations
 
@@ -84,14 +84,18 @@ How should these be implemented?
 One approach is to combine _Observable selector_ properties like this
 
 ```typescript
-orders$ = combineLatest([currentCustomerId$, orders$]).pipe(map(([customerId, orders]) => orders.filter((o) => o.customerId === customerId)));
+orders$ = combineLatest([currentCustomerId$, orders$]).pipe(
+  map(([customerId, orders]) =>
+    orders.filter((o) => o.customerId === customerId)
+  )
+);
 ```
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 We'll explore this and rival approaches in a future documentation update.
 
-</div>
+</ngrx-docs-alert>
 
 ## Client-side primary key generation
 
@@ -210,8 +214,8 @@ Many Angular (and AngularJS) applications use _Breeze_ today.
 
 It's not the library for you if you **_require_** a small library that adheres to _reactive_, _immutable_, _redux-like_ principles.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 Disclosure: one of the NgRx Data authors, Ward Bell, is an original core Breeze contributor.
 
-</div>
+</ngrx-docs-alert>

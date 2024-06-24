@@ -20,7 +20,10 @@ Examples of **incorrect** code for this rule:
 
 ```ts
 export class Component {
-  constructor(private readonly customersStore: Store<Customers>, private readonly catalogStore: Store<Catalog>) {}
+  constructor(
+    private readonly customersStore: Store<Customers>,
+    private readonly catalogStore: Store<Catalog>
+  ) {}
 }
 ```
 

@@ -47,7 +47,7 @@ The `BooksStore` instance will contain the following properties:
 - `filter.query: Signal<string>`
 - `filter.order: Signal<'asc' | 'desc'>`
 
-<div class="alert alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The `withState` feature also has a signature that takes the initial state factory as an input argument.
 The factory is executed within the injection context, allowing initial state to be obtained from a service or injection token.
@@ -60,7 +60,7 @@ const BOOKS_STATE = new InjectionToken<BooksState>('BooksState', {
 const BooksStore = signalStore(withState(() => inject(BOOKS_STATE)));
 ```
 
-</div>
+</ngrx-docs-alert>
 
 ## Providing and Injecting the Store
 
@@ -74,12 +74,12 @@ import { Component, inject } from '@angular/core';
 import { BooksStore } from './books.store';
 
 @Component({
-/_ ... _/
-// 👇 Providing `BooksStore` at the component level.
-providers: [BooksStore],
+  /* ... */
+  // 👇 Providing `BooksStore` at the component level.
+  providers: [BooksStore],
 })
 export class BooksComponent {
-readonly store = inject(BooksStore);
+  readonly store = inject(BooksStore);
 }
 ```
 
@@ -94,14 +94,18 @@ Alternatively, a SignalStore can be globally registered by setting the `provided
 import { signalStore, withState } from '@ngrx/signals';
 import { Book } from './book.model';
 
-type BooksState = { /_ ... _/ };
+type BooksState = {
+  /* ... */
+};
 
-const initialState: BooksState = { /_ ... _/ };
+const initialState: BooksState = {
+  /* ... */
+};
 
 export const BooksStore = signalStore(
-// 👇 Providing `BooksStore` at the root level.
-{ providedIn: 'root' },
-withState(initialState)
+  // 👇 Providing `BooksStore` at the root level.
+  { providedIn: 'root' },
+  withState(initialState)
 );
 ```
 
@@ -150,22 +154,26 @@ When used within the reactive context, state changes are automatically tracked.
 
 <ngrx-code-example header="books.component.ts">
 
+```ts
 import { Component, effect, inject } from '@angular/core';
 import { getState } from '@ngrx/signals';
 import { BooksStore } from './books.store';
 
-@Component({ /_ ... _/ })
+@Component({
+  /* ... */
+})
 export class BooksComponent {
-readonly store = inject(BooksStore);
+  readonly store = inject(BooksStore);
 
-constructor() {
-effect(() => {
-// 👇 The effect will be re-executed whenever the state changes.
-const state = getState(this.store);
-console.log('books state changed', state);
-});
+  constructor() {
+    effect(() => {
+      // 👇 The effect will be re-executed whenever the state changes.
+      const state = getState(this.store);
+      console.log('books state changed', state);
+    });
+  }
 }
-}
+```
 
 </ngrx-code-example>
 
@@ -177,29 +185,34 @@ The factory should return a dictionary of computed signals, utilizing previously
 
 <ngrx-code-example header="books.store.ts">
 
+```ts
 import { computed } from '@angular/core';
 import { signalStore, withComputed, withState } from '@ngrx/signals';
 import { Book } from './book.model';
 
-type BooksState = { /_ ... _/ };
+type BooksState = {
+  /* ... */
+};
 
-const initialState: BooksState = { /_ ... _/ };
+const initialState: BooksState = {
+  /* ... */
+};
 
 export const BooksStore = signalStore(
-withState(initialState),
-// 👇 Accessing previously defined state and computed signals.
-withComputed(({ books, filter }) => ({
-booksCount: computed(() => books().length),
-sortedBooks: computed(() => {
-const direction = filter.order() === 'asc' ? 1 : -1;
+  withState(initialState),
+  // 👇 Accessing previously defined state and computed signals.
+  withComputed(({ books, filter }) => ({
+    booksCount: computed(() => books().length),
+    sortedBooks: computed(() => {
+      const direction = filter.order() === 'asc' ? 1 : -1;
 
-      return books().toSorted((a, b) =>
-        direction * a.title.localeCompare(b.title)
+      return books().toSorted(
+        (a, b) => direction * a.title.localeCompare(b.title)
       );
     }),
-
-}))
+  }))
 );
+```
 
 </ngrx-code-example>
 
@@ -212,75 +225,90 @@ The store instance, including previously defined state, computed signals, and me
 
 <ngrx-code-example header="books.store.ts">
 
+```ts
 import { computed } from '@angular/core';
 import {
-patchState,
-signalStore,
-withComputed,
-withMethods,
-withState,
+  patchState,
+  signalStore,
+  withComputed,
+  withMethods,
+  withState,
 } from '@ngrx/signals';
 import { Book } from './book.model';
 
-type BooksState = { /_ ... _/ };
+type BooksState = {
+  /* ... */
+};
 
-const initialState: BooksState = { /_ ... _/ };
+const initialState: BooksState = {
+  /* ... */
+};
 
 export const BooksStore = signalStore(
-withState(initialState),
-withComputed(/_ ... _/),
-// 👇 Accessing a store instance with previously defined state,
-// computed signals, and methods.
-withMethods((store) => ({
-updateQuery(query: string): void {
-// 👇 Updating state using the `patchState` function.
-patchState(store, (state) => ({ filter: { ...state.filter, query } }));
-},
-updateOrder(order: 'asc' | 'desc'): void {
-patchState(store, (state) => ({ filter: { ...state.filter, order } }));
-},
-}))
+  withState(initialState),
+  withComputed(/* ... */),
+  // 👇 Accessing a store instance with previously defined state,
+  // computed signals, and methods.
+  withMethods((store) => ({
+    updateQuery(query: string): void {
+      // 👇 Updating state using the `patchState` function.
+      patchState(store, (state) => ({
+        filter: { ...state.filter, query },
+      }));
+    },
+    updateOrder(order: 'asc' | 'desc'): void {
+      patchState(store, (state) => ({
+        filter: { ...state.filter, order },
+      }));
+    },
+  }))
 );
+```
 
 </ngrx-code-example>
 
-<div class="alert alert is-important">
+<ngrx-docs-alert type="inform">
 
 The state of the SignalStore is updated using the `patchState` function.
 For more details on the `patchState` function, refer to the [Updating State](/guide/signals/signal-state#updating-state) guide.
 
-</div>
+</ngrx-docs-alert>
 
 In addition to methods for updating state, the `withMethods` feature can also be used to create methods for performing side effects.
 Asynchronous side effects can be executed using Promise-based APIs, as demonstrated below.
 
 <ngrx-code-example header="books.store.ts">
 
+```ts
 import { computed, inject } from '@angular/core';
-import { patchState, signalStore, /_ ... _/ } from '@ngrx/signals';
+import { patchState, signalStore /* ... */ } from '@ngrx/signals';
 import { Book } from './book.model';
 import { BooksService } from './books.service';
 
-type BooksState = { /_ ... _/ };
+type BooksState = {
+  /* ... */
+};
 
-const initialState: BooksState = { /_ ... _/ };
+const initialState: BooksState = {
+  /* ... */
+};
 
 export const BooksStore = signalStore(
-withState(initialState),
-withComputed(/_ ... _/),
-// 👇 `BooksService` can be injected within the `withMethods` factory.
-withMethods((store, booksService = inject(BooksService)) => ({
-/_ ... _/
-// 👇 Defining a method to load all books.
-async loadAll(): Promise<void> {
-patchState(store, { isLoading: true });
+  withState(initialState),
+  withComputed(/* ... */),
+  // 👇 `BooksService` can be injected within the `withMethods` factory.
+  withMethods((store, booksService = inject(BooksService)) => ({
+    /* ... */
+    // 👇 Defining a method to load all books.
+    async loadAll(): Promise<void> {
+      patchState(store, { isLoading: true });
 
       const books = await booksService.getAll();
       patchState(store, { books, isLoading: false });
     },
-
-}))
+  }))
 );
+```
 
 </ngrx-code-example>
 
@@ -291,52 +319,65 @@ To create a reactive SignalStore method that harnesses RxJS APIs, use the `rxMet
 
 <ngrx-code-example header="books.store.ts">
 
+```ts
 import { computed, inject } from '@angular/core';
-import { debounceTime, distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
-import { patchState, signalStore, /_ ... _/ } from '@ngrx/signals';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  pipe,
+  switchMap,
+  tap,
+} from 'rxjs';
+import { patchState, signalStore /* ... */ } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { Book } from './book.model';
 import { BooksService } from './books.service';
 
-type BooksState = { /_ ... _/ };
+type BooksState = {
+  /* ... */
+};
 
-const initialState: BooksState = { /_ ... _/ };
+const initialState: BooksState = {
+  /* ... */
+};
 
 export const BooksStore = signalStore(
-withState(initialState),
-withComputed(/_ ... _/),
-withMethods((store, booksService = inject(BooksService)) => ({
-/_ ... _/
-// 👇 Defining a method to load books by query.
-loadByQuery: rxMethod<string>(
-pipe(
-debounceTime(300),
-distinctUntilChanged(),
-tap(() => patchState(store, { isLoading: true })),
-switchMap((query) => {
-return booksService.getByQuery(query).pipe(
-tapResponse({
-next: (books) => patchState(store, { books, isLoading: false }),
-error: (err) => {
-patchState(store, { isLoading: false });
-console.error(err);
-},
-})
+  withState(initialState),
+  withComputed(/* ... */),
+  withMethods((store, booksService = inject(BooksService)) => ({
+    /* ... */
+    // 👇 Defining a method to load books by query.
+    loadByQuery: rxMethod<string>(
+      pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        tap(() => patchState(store, { isLoading: true })),
+        switchMap((query) => {
+          return booksService.getByQuery(query).pipe(
+            tapResponse({
+              next: (books) =>
+                patchState(store, { books, isLoading: false }),
+              error: (err) => {
+                patchState(store, { isLoading: false });
+                console.error(err);
+              },
+            })
+          );
+        })
+      )
+    ),
+  }))
 );
-})
-)
-),
-}))
-);
+```
 
 </ngrx-code-example>
 
-<div class="alert alert is-helpful">
+<ngrx-docs-alert type="help">
 
 To learn more about the `rxMethod` function, visit the [RxJS Integration](/guide/signals/rxjs-integration) page.
 
-</div>
+</ngrx-docs-alert>
 
 ## Putting It All Together
 
@@ -344,14 +385,21 @@ The final `BooksStore` implementation with state, computed signals, and methods 
 
 <ngrx-code-example header="books.store.ts">
 
+```ts
 import { computed, inject } from '@angular/core';
-import { debounceTime, distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
 import {
-patchState,
-signalStore,
-withComputed,
-withMethods,
-withState,
+  debounceTime,
+  distinctUntilChanged,
+  pipe,
+  switchMap,
+  tap,
+} from 'rxjs';
+import {
+  patchState,
+  signalStore,
+  withComputed,
+  withMethods,
+  withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
@@ -359,55 +407,59 @@ import { Book } from './book.model';
 import { BooksService } from './books.service';
 
 type BooksState = {
-books: Book[];
-isLoading: boolean;
-filter: { query: string; order: 'asc' | 'desc' };
+  books: Book[];
+  isLoading: boolean;
+  filter: { query: string; order: 'asc' | 'desc' };
 };
 
 const initialState: BooksState = {
-books: [],
-isLoading: false,
-filter: { query: '', order: 'asc' },
+  books: [],
+  isLoading: false,
+  filter: { query: '', order: 'asc' },
 };
 
 export const BooksStore = signalStore(
-withState(initialState),
-withComputed(({ books, filter }) => ({
-booksCount: computed(() => books().length),
-sortedBooks: computed(() => {
-const direction = filter.order() === 'asc' ? 1 : -1;
+  withState(initialState),
+  withComputed(({ books, filter }) => ({
+    booksCount: computed(() => books().length),
+    sortedBooks: computed(() => {
+      const direction = filter.order() === 'asc' ? 1 : -1;
 
-      return books().toSorted((a, b) =>
-        direction * a.title.localeCompare(b.title)
+      return books().toSorted(
+        (a, b) => direction * a.title.localeCompare(b.title)
       );
     }),
-
-})),
-withMethods((store, booksService = inject(BooksService)) => ({
-updateQuery(query: string): void {
-patchState(store, (state) => ({ filter: { ...state.filter, query } }));
-},
-updateOrder(order: 'asc' | 'desc'): void {
-patchState(store, (state) => ({ filter: { ...state.filter, order } }));
-},
-loadByQuery: rxMethod<string>(
-pipe(
-debounceTime(300),
-distinctUntilChanged(),
-tap(() => patchState(store, { isLoading: true })),
-switchMap((query) => {
-return booksService.getByQuery(query).pipe(
-tapResponse({
-next: (books) => patchState(store, { books }),
-error: console.error,
-finalize: () => patchState(store, { isLoading: false }),
-})
+  })),
+  withMethods((store, booksService = inject(BooksService)) => ({
+    updateQuery(query: string): void {
+      patchState(store, (state) => ({
+        filter: { ...state.filter, query },
+      }));
+    },
+    updateOrder(order: 'asc' | 'desc'): void {
+      patchState(store, (state) => ({
+        filter: { ...state.filter, order },
+      }));
+    },
+    loadByQuery: rxMethod<string>(
+      pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        tap(() => patchState(store, { isLoading: true })),
+        switchMap((query) => {
+          return booksService.getByQuery(query).pipe(
+            tapResponse({
+              next: (books) => patchState(store, { books }),
+              error: console.error,
+              finalize: () => patchState(store, { isLoading: false }),
+            })
+          );
+        })
+      )
+    ),
+  }))
 );
-})
-)
-),
-}))
-);
+```
 
 </ngrx-code-example>
 
@@ -427,28 +479,33 @@ The `BooksStore` instance will contain the following properties and methods:
   - `updateOrder(order: 'asc' | 'desc'): void`
   - `loadByQuery: RxMethod<string>`
 
-<div class="alert alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The `BooksStore` implementation can be enhanced further by utilizing the `entities` plugin and creating custom SignalStore features.
 For more details, refer to the [Entity Management](guide/signals/signal-store/entity-management) and [Custom Store Features](guide/signals/signal-store/custom-store-features) guides.
 
-</div>
+</ngrx-docs-alert>
 
 The `BooksComponent` can use the `BooksStore` to manage the state, as demonstrated below.
 
 <ngrx-code-example header="books.component.ts">
 
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+```ts
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { BooksFilterComponent } from './books-filter.component';
 import { BookListComponent } from './book-list.component';
 import { BooksStore } from './books.store';
 
 @Component({
-standalone: true,
-imports: [BooksFilterComponent, BookListComponent],
-template: `
-
-<h1>Books ({{ store.booksCount() }})</h1>
+  standalone: true,
+  imports: [BooksFilterComponent, BookListComponent],
+  template: `
+    <h1>Books ({{ store.booksCount() }})</h1>
 
     <ngrx-books-filter
       [query]="store.filter.query()"
@@ -461,26 +518,26 @@ template: `
       [books]="store.sortedBooks()"
       [isLoading]="store.isLoading()"
     />
-
-`,
-providers: [BooksStore],
-changeDetection: ChangeDetectionStrategy.OnPush,
+  `,
+  providers: [BooksStore],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BooksComponent implements OnInit {
-readonly store = inject(BooksStore);
+  readonly store = inject(BooksStore);
 
-ngOnInit(): void {
-const query = this.store.filter.query;
-// 👇 Re-fetch books whenever the value of query signal changes.
-this.store.loadByQuery(query);
+  ngOnInit(): void {
+    const query = this.store.filter.query;
+    // 👇 Re-fetch books whenever the value of query signal changes.
+    this.store.loadByQuery(query);
+  }
 }
-}
+```
 
 </ngrx-code-example>
 
-<div class="alert alert is-helpful">
+<ngrx-docs-alert type="help">
 
 In addition to component lifecycle hooks, SignalStore also offers the ability to define them at the store level.
 Learn more about SignalStore lifecycle hooks [here](/guide/signals/signal-store/lifecycle-hooks).
 
-</div>
+</ngrx-docs-alert>

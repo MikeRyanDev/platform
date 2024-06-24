@@ -1,5 +1,5 @@
 import { Plugin } from 'vite';
-import { parse } from 'yaml';
+import { parse as parseYaml } from 'yaml';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -62,9 +62,8 @@ export default function ngrxStackblitzPlugin(): Plugin {
     }
 
     const pathToBase = path.resolve(path.dirname(id), config.extends);
-    const base = parse(
-      fs.readFileSync(pathToBase, 'utf-8')
-    ) as StackblitzConfig;
+    const baseContents = fs.readFileSync(pathToBase, 'utf-8');
+    const base = parseYaml(baseContents) as StackblitzConfig;
     const baseFiles = resolveFiles(pathToBase, base.files);
 
     return {
@@ -94,7 +93,11 @@ export default function ngrxStackblitzPlugin(): Plugin {
         return;
       }
 
-      const parsed = parse(src);
+      if (src.startsWith('export default')) {
+        return src;
+      }
+
+      const parsed = parseYaml(src);
       const config = loadConfig(id, parsed as StackblitzConfig);
 
       return `export default ${JSON.stringify(config)};`;

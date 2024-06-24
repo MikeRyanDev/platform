@@ -1,22 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { GuideSectionComponent } from './guide-section.component';
+import { GuideMenuService } from '../services/guide-menu.service';
 
 @Component({
   selector: 'ngrx-menu',
   standalone: true,
-  imports: [MatIconModule, RouterLink, RouterLinkActive],
+  imports: [MatIconModule, RouterLink, RouterLinkActive, GuideSectionComponent],
   template: `
-    <a href="">
-      <img src="/ngrx-logo.svg" alt="ngrx logo" width="64" />
+    <a routerLink="" class="logoLink">
+      <img src="/ngrx-logo-pink.svg" alt="ngrx logo" />
+      NgRx
     </a>
-    <a href="" class="menu-link">
+    <hr />
+    <a routerLink="/learn" class="menu-link">
       <mat-icon>school</mat-icon>
       Learn
-    </a>
-    <a routerLink="/guide" routerLinkActive="active" class="menu-link">
-      <mat-icon>menu_book</mat-icon>
-      Guide
     </a>
     <a href="" class="menu-link">
       <mat-icon>co_present</mat-icon>
@@ -24,61 +24,101 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     </a>
     <a routerLink="/api" routerLinkActive="active" class="menu-link">
       <mat-icon>description</mat-icon>
-      Reference
+      API Reference
     </a>
     <a href="" class="menu-link">
       <mat-icon>help</mat-icon>
       Support
     </a>
-    <a href="" class="menu-link">
+    <a
+      href="https://github.com/ngrx/platform"
+      target="__blank"
+      class="menu-link"
+    >
       <mat-icon>code</mat-icon>
       GitHub
     </a>
+    <hr />
+    <span class="guideHeader">Guide</span>
+    <ngrx-guide-section
+      [section]="guideMenu.getMenu()"
+      [collapsible]="false"
+    ></ngrx-guide-section>
   `,
   styles: [
     `
+      .logoLink {
+        font-family: 'Oxanium', sans-serif;
+        font-weight: 600;
+        font-size: 18px;
+        color: white;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logoLink img {
+        width: 24px;
+      }
+
       :host {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        width: 124px;
+        width: 270px;
         height: 100lvh;
-        gap: 24px;
-        padding: 48px 0;
+        gap: 16px;
+        padding: 32px 24px;
         background-color: #17111a;
         border-right: 1px solid rgba(255, 255, 255, 0.12);
+        overflow-y: scroll;
       }
 
       .menu-link {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
-        padding: 16px;
-        gap: 8px;
+        gap: 12px;
         text-decoration: none;
-        color: white;
+        color: rgba(255, 255, 255, 0.64);
         font-family: 'Oxanium', sans-serif;
-        font-weight: 200;
         font-size: 14px;
-        opacity: 0.64;
-        transition: opacity 0.2s;
+        transition: color 0.2s;
       }
 
       .menu-link mat-icon {
-        color: #cf8fc5;
+        color: rgba(255, 255, 255, 0.32);
+        font-size: 20px;
+        transition: color 0.2s;
       }
 
       .menu-link:hover,
       .menu-link.active {
-        opacity: 1;
+        color: white;
       }
 
-      @media screen and (max-width: 600px) {
-        :host {
-          width: 64px;
-        }
+      .menu-link:hover mat-icon,
+      .menu-link.active mat-icon {
+        color: #cf8fc5;
+      }
+
+      hr {
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        width: 100%;
+      }
+
+      .guideHeader {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 0 0 0 8px;
+        margin: -8px;
       }
     `,
   ],
 })
-export class MenuComponent {}
+export class MenuComponent {
+  guideMenu = inject(GuideMenuService);
+}

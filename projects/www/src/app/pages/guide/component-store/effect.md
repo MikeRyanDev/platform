@@ -17,42 +17,51 @@ incoming values should be handled. Each new call of the effect would push the va
 Observable.
 
 <ngrx-code-example header="movies.store.ts">
+
+```ts
 @Injectable()
 export class MoviesStore extends ComponentStore<MoviesState> {
-  
   constructor(private readonly moviesService: MoviesService) {
-    super({movies: []});
+    super({ movies: [] });
   }
 
-// Each new call of getMovie(id) pushed that id into movieId$ stream.
-readonly getMovie = this.effect((movieId$: Observable<string>) => {
+  // Each new call of getMovie(id) pushed that id into movieId$ stream.
+  readonly getMovie = this.effect((movieId$: Observable<string>) => {
     return movieId$.pipe(
-// 👇 Handle race condition with the proper choice of the flattening operator.
-switchMap((id) => this.moviesService.fetchMovie(id).pipe(
-//👇 Act on the result within inner pipe.
-tap({
-next: (movie) => this.addMovie(movie),
-error: (e) => this.logError(e),
-}),
-// 👇 Handle potential error within inner pipe.
-catchError(() => EMPTY),
-)),
-);
-});
+      // 👇 Handle race condition with the proper choice of the flattening operator.
+      switchMap((id) =>
+        this.moviesService.fetchMovie(id).pipe(
+          //👇 Act on the result within inner pipe.
+          tap({
+            next: (movie) => this.addMovie(movie),
+            error: (e) => this.logError(e),
+          }),
+          // 👇 Handle potential error within inner pipe.
+          catchError(() => EMPTY)
+        )
+      )
+    );
+  });
 
-readonly addMovie = this.updater((state, movie: Movie) => ({
-movies: [...state.movies, movie],
-}));
+  readonly addMovie = this.updater((state, movie: Movie) => ({
+    movies: [...state.movies, movie],
+  }));
 
-selectMovie(movieId: string) {
-return this.select((state) => state.movies.find(m => m.id === movieId));
+  selectMovie(movieId: string) {
+    return this.select((state) =>
+      state.movies.find((m) => m.id === movieId)
+    );
+  }
 }
-}
+```
+
 </ngrx-code-example>
 
 The `getMovie` effect could then be used within a component.
 
 <ngrx-code-example header="movie.component.ts">
+
+```ts
 @Component({
   template: `...`,
   // ❗️MoviesStore is provided higher up the component tree
@@ -60,16 +69,17 @@ The `getMovie` effect could then be used within a component.
 export class MovieComponent {
   movie$: Observable<Movie>;
 
-@Input()
-set movieId(value: string) {
-// calls effect with value. 👇 Notice it's a single string value.
-this.moviesStore.getMovie(value);
-this.movie$ = this.moviesStore.selectMovie(value);
-}
+  @Input()
+  set movieId(value: string) {
+    // calls effect with value. 👇 Notice it's a single string value.
+    this.moviesStore.getMovie(value);
+    this.movie$ = this.moviesStore.selectMovie(value);
+  }
 
-constructor(private readonly moviesStore: MoviesStore) {}
-
+  constructor(private readonly moviesStore: MoviesStore) {}
 }
+```
+
 </ngrx-code-example>
 
 ## Calling an `effect` without parameters
@@ -78,8 +88,10 @@ A common use case is to call the `effect` method without any parameters.
 To make this possible set the generic type of the `effect` method to `void`.
 
 <ngrx-code-example header="movies.store.ts">
+
+```ts
   readonly getAllMovies = this.effect<void>(
-    // The name of the source stream doesn't matter: `trigger$`, `source$` or `$` are good 
+    // The name of the source stream doesn't matter: `trigger$`, `source$` or `$` are good
     // names. We encourage to choose one of these and use them consistently in your codebase.
     (trigger$) => trigger$.pipe(
       exhaustMap(() =>
@@ -92,4 +104,6 @@ To make this possible set the generic type of the `effect` method to `void`.
       )
     )
   );
+```
+
 </ngrx-code-example>

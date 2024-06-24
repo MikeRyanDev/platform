@@ -8,18 +8,20 @@ Start by defining the state for the `User` feature.
 
 <ngrx-code-example header="users.state.ts">
 
+```ts
 import { EntityState, createEntityAdapter } from '@ngrx/entity';
 import { User } from './user.model';
 
 export interface State extends EntityState<User> {
-selectedUserId: string | null;
+  selectedUserId: string | null;
 }
 
 const adapter = createEntityAdapter<User>();
 
 export const initialState: State = adapter.getInitialState({
-selectedUserId: null,
+  selectedUserId: null,
 });
+```
 
 </ngrx-code-example>
 
@@ -27,16 +29,18 @@ Then, we define the `User` actions: `addUser` and `selectUser`.
 
 <ngrx-code-example header="user-list-page.actions.ts">
 
+```ts
 import { createActionGroup, props } from '@ngrx/store';
 import { User } from './user.model';
 
 export const UserListPageActions = createActionGroup({
-source: 'User List Page',
-events: {
-addUser: props<{ user: User }>(),
-selectUser: props<{ userId: string }>(),
-},
+  source: 'User List Page',
+  events: {
+    addUser: props<{ user: User }>(),
+    selectUser: props<{ userId: string }>(),
+  },
 });
+```
 
 </ngrx-code-example>
 
@@ -44,19 +48,21 @@ Then use the `createReducer` function to create a reducer for the `User` feature
 
 <ngrx-code-example header="users.state.ts">
 
+```ts
 import { createReducer, on } from '@ngrx/store';
 import { UserListPageActions } from './user-list-page.actions';
 
 const reducer = createReducer(
-initialState,
-on(UserListPageActions.addUser, (state, { user }) =>
-adapter.addOne(user, state)
-),
-on(UserListPageActions.selectUser, (state, { userId }) => ({
-...state,
-selectedUserId: userId,
-}))
+  initialState,
+  on(UserListPageActions.addUser, (state, { user }) =>
+    adapter.addOne(user, state)
+  ),
+  on(UserListPageActions.selectUser, (state, { userId }) => ({
+    ...state,
+    selectedUserId: userId,
+  }))
 );
+```
 
 </ngrx-code-example>
 
@@ -65,24 +71,31 @@ This generates all the basic selectors automatically, and we can specify extra s
 
 <ngrx-code-example header="users.state.ts">
 
+```ts
 import { createFeature, createSelector } from '@ngrx/store';
 
 export const usersFeature = createFeature({
-name: 'users',
-reducer,
-extraSelectors: ({ selectUsersState, selectEntities, selectSelectedUserId }) => ({
-...adapter.getSelectors(selectUsersState),
-selectIsUserSelected: createSelector(
-selectSelectedUserId,
-(selectedId) => selectedId !== null
-),
-selectSelectedUser: createSelector(
-selectSelectedUserId,
-selectEntities,
-(selectedId, entities) => selectedId ? entities[selectedId] : null
-),
-}),
+  name: 'users',
+  reducer,
+  extraSelectors: ({
+    selectUsersState,
+    selectEntities,
+    selectSelectedUserId,
+  }) => ({
+    ...adapter.getSelectors(selectUsersState),
+    selectIsUserSelected: createSelector(
+      selectSelectedUserId,
+      (selectedId) => selectedId !== null
+    ),
+    selectSelectedUser: createSelector(
+      selectSelectedUserId,
+      selectEntities,
+      (selectedId, entities) =>
+        selectedId ? entities[selectedId] : null
+    ),
+  }),
 });
+```
 
 </ngrx-code-example>
 
@@ -90,15 +103,23 @@ To use the selector within a component, `inject` the `Store` and select the data
 
 <ngrx-code-example header="user-list.component.ts">
 
+```ts
 import { usersFeature } from './users.state';
 
-@Component({ /_ ... _/ })
-export class UserListComponent{
-private readonly store = inject(Store);
+@Component({
+  /* ... */
+})
+export class UserListComponent {
+  private readonly store = inject(Store);
 
-readonly users$ = this.store.select(usersFeature.selectAll);
-readonly isUserSelected$ = this.store.select(usersFeature.selectIsUserSelected);
-readonly selectedUser$ = this.store.select(usersFeature.selectSelectedUser);
+  readonly users$ = this.store.select(usersFeature.selectAll);
+  readonly isUserSelected$ = this.store.select(
+    usersFeature.selectIsUserSelected
+  );
+  readonly selectedUser$ = this.store.select(
+    usersFeature.selectSelectedUser
+  );
 }
+```
 
 </ngrx-code-example>

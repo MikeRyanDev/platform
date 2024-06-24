@@ -37,11 +37,11 @@ It's possible to override the default configuration of runtime checks. To do so,
 export class AppModule {}
 ```
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
 The serializability runtime checks cannot be enabled if you use `@ngrx/router-store` with the `FullRouterStateSerializer`. The [full serializer](guide/router-store/configuration) has an unserializable router state and actions that are not serializable. To use the serializability runtime checks either use the `MinimalRouterStateSerializer` or implement a custom router state serializer.
 
-</div>
+</ngrx-docs-alert>
 
 ### strictStateImmutability
 
@@ -97,7 +97,10 @@ export const reducer = createReducer(
 To fix the above violation, the todo's id should be set in the action creator or should be set in an immutable way. That way we can simply append the todo to the current `todos`:
 
 ```ts
-export const addTodo = createAction('[Todo List] Add Todo', (description: string) => ({ id: generateUniqueId(), description }));
+export const addTodo = createAction(
+  '[Todo List] Add Todo',
+  (description: string) => ({ id: generateUniqueId(), description })
+);
 export const reducer = createReducer(
   initialState,
   on(addTodo, (state, { todo }) => ({
@@ -155,30 +158,36 @@ The `strictActionSerializability` check resembles `strictStateSerializability` b
 Example violation of the rule:
 
 ```ts
-const createTodo = createAction('[Todo List] Add new todo', (todo) => ({
-  todo,
-  // Violation, a function is not serializable
-  logTodo: () => {
-    console.log(todo);
-  },
-}));
+const createTodo = createAction(
+  '[Todo List] Add new todo',
+  (todo) => ({
+    todo,
+    // Violation, a function is not serializable
+    logTodo: () => {
+      console.log(todo);
+    },
+  })
+);
 ```
 
 The fix for this violation is to not add functions on actions, as a replacement a function can be created:
 
 ```ts
-const createTodo = createAction('[Todo List] Add new todo', props<{ todo: Todo }>());
+const createTodo = createAction(
+  '[Todo List] Add new todo',
+  props<{ todo: Todo }>()
+);
 
 function logTodo(todo: Todo) {
   console.log(todo);
 }
 ```
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
 Please note, you may not need to set `strictActionSerializability` to `true` unless you are storing/replaying actions using external resources, for example `localStorage`.
 
-</div>
+</ngrx-docs-alert>
 
 ### strictActionWithinNgZone
 
@@ -215,13 +224,21 @@ The `strictActionTypeUniqueness` guards you against registering the same action 
 Example violation of the rule:
 
 ```ts
-export const customerPageLoaded = createAction('[Customers Page] Loaded');
-export const customerPageRefreshed = createAction('[Customers Page] Loaded');
+export const customerPageLoaded = createAction(
+  '[Customers Page] Loaded'
+);
+export const customerPageRefreshed = createAction(
+  '[Customers Page] Loaded'
+);
 ```
 
 The fix of the violation is to create unique action types:
 
 ```ts
-export const customerPageLoaded = createAction('[Customers Page] Loaded');
-export const customerPageRefreshed = createAction('[Customers Page] Refreshed');
+export const customerPageLoaded = createAction(
+  '[Customers Page] Loaded'
+);
+export const customerPageRefreshed = createAction(
+  '[Customers Page] Refreshed'
+);
 ```

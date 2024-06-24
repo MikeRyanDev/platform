@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # EntityChangeTracker
 
@@ -17,11 +17,11 @@ Change-tracking and _undo_ are important for applications that make _optimistic 
 An _optimistic save_ stores a new or changed entity in the cache _before making a save request to the server_.
 It also removes an entity from the store _before making a delete request to the server_.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The `EntityAction.isOptimistic` flag is one of the `EntityActionOptions`. Set it to override the action's default optimistic or pessimistic behavior.
 
-</div>
+</ngrx-docs-alert>
 
 Many apps are easier to build when saves are "optimistic" because
 the changes are immediately available to application code that is watching collection selectors.
@@ -38,12 +38,12 @@ And it's difficult to hide this gap from the user and keep the user experience r
 
 This isn't a problem with optimistic saves because the changed data are immediately available in the store.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The developer always has the option to wait for confirmation of an optimistic save.
 But the changed entity data will be in the store during that wait.
 
-</div>
+</ngrx-docs-alert>
 
 ### Save errors
 
@@ -82,42 +82,46 @@ The NgRx Data tracks an entity's change-state in the collection's `changeState` 
 
 When change tracking is enabled (the default), the `changeState` is a _primary key to_ `changeState` _map_.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 You can disable change tracking for an individual action or the collection as a whole as
 described [below](#disable-change-tracking).
 
-</div>
+</ngrx-docs-alert>
 
 ### _ChangeState_
 
 A `changeState` map adheres to the following interface
 
 <ngrx-code-example header="ChangeState" linenums="false">
+
+```ts
 export interface ChangeState<T> {
   changeType: ChangeType;
   originalValue: T | undefined;
 }
 
 export enum ChangeType {
-Unchanged, // the entity has not been changed.
-Added, // the entity was added to the collection
-Updated, // the entity in the collection was updated
-Deleted, // the entity is scheduled for delete and was removed from collection.
+  Unchanged, // the entity has not been changed.
+  Added, // the entity was added to the collection
+  Updated, // the entity in the collection was updated
+  Deleted, // the entity is scheduled for delete and was removed from collection.
 }
+```
+
 </ngrx-code-example>
 
 A _ChangeState_ describes an entity that changed since its last known server value.
 The `changeType` property tells you how it changed.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 `Unchanged` is an _implied_ state.
 Only changed entities are recorded in the collection's `changeState` property.
 If an entity's key is not present, assume it is `Unchanged` and has not changed since it was last
 retrieved from or successfully saved to the server.
 
-</div>
+</ngrx-docs-alert>
 
 The _original value_ is the last known value from the server.
 The `changeState` object holds an entity's _original value_ for _two_ of these states: _Updated_ and _Deleted_.
@@ -141,25 +145,29 @@ Delete (remove) is a special case with special rules.
 Here are the most important `EntityOps` that record an entity in the `changeState` map:
 
 <ngrx-code-example linenums="false">
-  // Save operations when isOptimistic flag is true
-  SAVE_ADD_ONE
-  SAVE_ADD_MANY
-  SAVE_DELETE_ONE
-  SAVE_DELETE_MANY
-  SAVE_UPDATE_ONE
-  SAVE_UPDATE_MANY
-  SAVE_UPSERT_ONE
-  SAVE_UPSERT_MANY
+
+```ts
+// Save operations when isOptimistic flag is true
+SAVE_ADD_ONE;
+SAVE_ADD_MANY;
+SAVE_DELETE_ONE;
+SAVE_DELETE_MANY;
+SAVE_UPDATE_ONE;
+SAVE_UPDATE_MANY;
+SAVE_UPSERT_ONE;
+SAVE_UPSERT_MANY;
 
 // Cache operations
-ADD_ONE
-ADD_MANY
-REMOVE_ONE
-REMOVE_MANY
-UPDATE_ONE
-UPDATE_MANY
-UPSERT_ONE
-UPSERT_MANY
+ADD_ONE;
+ADD_MANY;
+REMOVE_ONE;
+REMOVE_MANY;
+UPDATE_ONE;
+UPDATE_MANY;
+UPSERT_ONE;
+UPSERT_MANY;
+```
+
 </ngrx-code-example>
 
 ### Removing an entity from the _changeState_ map.
@@ -181,22 +189,26 @@ Operations that put that entity in the store also remove it from the `changeStat
 Here are the operations that remove one or more specified entities from the `changeState` map.
 
 <ngrx-code-example linenums="false">
-QUERY_ALL_SUCCESS
-QUERY_BY_KEY_SUCCESS
-QUERY_LOAD_SUCCESS
-QUERY_MANY_SUCCESS
-SAVE_ADD_ONE_SUCCESS
-SAVE_ADD_MANY_SUCCESS
-SAVE_DELETE_ONE_SUCCESS
-SAVE_DELETE_MANY_SUCCESS
-SAVE_UPDATE_ONE_SUCCESS
-SAVE_UPDATE_MANY_SUCCESS
-SAVE_UPSERT_ONE_SUCCESS
-SAVE_UPSERT_MANY_SUCCESS
-COMMIT_ONE
-COMMIT_MANY
-UNDO_ONE
-UNDO_MANY
+
+```ts
+QUERY_ALL_SUCCESS;
+QUERY_BY_KEY_SUCCESS;
+QUERY_LOAD_SUCCESS;
+QUERY_MANY_SUCCESS;
+SAVE_ADD_ONE_SUCCESS;
+SAVE_ADD_MANY_SUCCESS;
+SAVE_DELETE_ONE_SUCCESS;
+SAVE_DELETE_MANY_SUCCESS;
+SAVE_UPDATE_ONE_SUCCESS;
+SAVE_UPDATE_MANY_SUCCESS;
+SAVE_UPSERT_ONE_SUCCESS;
+SAVE_UPSERT_MANY_SUCCESS;
+COMMIT_ONE;
+COMMIT_MANY;
+UNDO_ONE;
+UNDO_MANY;
+```
+
 </ngrx-code-example>
 
 ### Operations that clear the _changeState_ map.
@@ -205,11 +217,15 @@ The `EntityOps` that replace or remove every entity in the collection also reset
 All entities in the collection (if any) become "unchanged".
 
 <ngrx-code-example linenums="false">
-ADD_ALL
-QUERY_LOAD_SUCCESS
-REMOVE_ALL
-COMMIT_ALL
-UNDO_ALL
+
+```ts
+ADD_ALL;
+QUERY_LOAD_SUCCESS;
+REMOVE_ALL;
+COMMIT_ALL;
+UNDO_ALL;
+```
+
 </ngrx-code-example>
 
 Two of these may surprise you.
@@ -264,19 +280,19 @@ When you remove or delete an "added" entity, the change tracker removes the enti
 
 The reducer methods that delete and remove entities should immediately remove an _added entity_ from the collection.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The default delete and remove reducer methods remove these entities immediately.
 
-</div>
+</ngrx-docs-alert>
 
 They should not send HTTP DELETE requests to the server because these entities do not exist on the server.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The default `EntityEffects.persist$` effect does not make HTTP DELETE requests for these entities.
 
-</div>
+</ngrx-docs-alert>
 
 #### Updated entities
 

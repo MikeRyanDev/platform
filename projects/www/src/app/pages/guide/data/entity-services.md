@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # EntityServices
 
@@ -19,17 +19,24 @@ Call its `EntityServices.getEntityCollectionService(entityName)` method to get t
 Here's a component doing that.
 
 <ngrx-code-example header="heroes-component.ts">
+
+```ts
 import { EntityCollectionService, EntityServices } from '@ngrx/data';
 import { Hero } from '../../model';
 
-@Component({...})
+@Component({
+  /* ... */
+})
 export class HeroesComponent implements OnInit {
-heroesService: EntityCollectionService<Hero>;
+  heroesService: EntityCollectionService<Hero>;
 
-constructor(entityServices: EntityServices) {
-this.heroesService = entityServices.getEntityCollectionService('Hero');
+  constructor(entityServices: EntityServices) {
+    this.heroesService =
+      entityServices.getEntityCollectionService('Hero');
+  }
 }
-}
+```
+
 </ngrx-code-example>
 
 If the `EntityCollectionService` service does not yet exist,
@@ -44,59 +51,80 @@ as explained in the [EntityCollectionService](guide/data/entity-collection-servi
 Here's an example.
 
 <ngrx-code-example header="heroes.service.ts">
+
+```ts
 import { Injectable } from '@angular/core';
-import { EntityCollectionServiceBase, EntityCollectionServiceElementsFactory } from '@ngrx/data';
+import {
+  EntityCollectionServiceBase,
+  EntityCollectionServiceElementsFactory,
+} from '@ngrx/data';
 
 import { Hero } from '../model';
 
 @Injectable()
 export class HeroesService extends EntityCollectionServiceBase<Hero> {
-constructor(elementsFactory: EntityCollectionServiceElementsFactory) {
-super('Hero', elementsFactory);
-}
+  constructor(
+    elementsFactory: EntityCollectionServiceElementsFactory
+  ) {
+    super('Hero', elementsFactory);
+  }
 
-// ... your special sauce here
+  // ... your special sauce here
 }
+```
+
 </ngrx-code-example>
 
 Of course you must provide the custom service before you use it, typically in an Angular `NgModule`.
 
 <ngrx-code-example header="heroes.module.ts">
-...
+
+```ts
 import { HeroesService } from './heroes.service';
 
 @NgModule({
-imports: [...],
-declarations: [...],
-providers: [HeroesService]
+  imports: [
+    /* ... */
+  ],
+  declarations: [
+    /* ... */
+  ],
+  providers: [HeroesService],
 })
 export class HeroesModule {}
+```
+
 </ngrx-code-example>
 
 The following alternative example uses the **preferred "tree-shakable" `Injectable()`**
 to provide the service in the root module.
 
-```javascript
+```ts
 @Injectable({ providedIn: 'root' })
 export class HeroesService extends EntityCollectionServiceBase<Hero> {
-  ...
+  /* ... */
 }
 ```
 
 You can inject that custom service directly into the component.
 
 <ngrx-code-example header="heroes.component.ts (v2)">
-@Component({...})
+
+```ts
+@Component({
+  /* ... */
+})
 export class HeroesComponent {
   heroes$: Observable<Hero[]>;
   loading$: Observable<boolean>;
 
-constructor(public heroesService: HeroesService) {
-this.heroes$ = this.heroesService.entities$;
+  constructor(public heroesService: HeroesService) {
+    this.heroes$ = this.heroesService.entities$;
     this.loading$ = this.heroesService.loading$;
+  }
 }
-...
-}
+```
+
 </ngrx-code-example>
 
 Nothing new so far.
@@ -118,7 +146,11 @@ and register them there.
 The following example demonstrates.
 
 <ngrx-code-example header="app.module.ts">
-@NgModule({ ... })
+
+```ts
+@NgModule({
+  /* ... */
+})
 export class AppModule {
   // Inject the service to ensure it registers with EntityServices
   constructor(
@@ -126,10 +158,12 @@ export class AppModule {
     // custom collection services
     hs: HeroesService,
     vs: VillainsService
-    ){
+  ) {
     entityServices.registerEntityCollectionServices([hs, vs]);
   }
 }
+```
+
 </ngrx-code-example>
 
 ## Sub-class _EntityServices_ for application class convenience
@@ -141,31 +175,40 @@ and adds convenience members for your application.
 The following `AppEntityServices` demonstrates.
 
 <ngrx-code-example header="app-entity-services.ts">
+
+```ts
 import { Injectable } from '@angular/core';
-import { EntityServicesBase, EntityServicesElements } from '@ngrx/data';
+import {
+  EntityServicesBase,
+  EntityServicesElements,
+} from '@ngrx/data';
 
 import { SideKick } from '../../model';
 import { HeroService, VillainService } from '../../services';
 
 @Injectable()
 export class AppEntityServices extends EntityServicesBase {
-constructor(
-elements: EntityServicesElements,
+  constructor(
+    elements: EntityServicesElements,
 
     // Inject custom services, register them with the EntityServices, and expose in API.
     readonly heroesService: HeroesService,
     readonly villainsService: VillainsService
+  ) {
+    super(elements);
+    this.registerEntityCollectionServices([
+      heroesService,
+      villainsService,
+    ]);
+  }
 
-) {
-super(elements);
-this.registerEntityCollectionServices([heroesService, villainsService]);
+  /* get the (default) SideKicks service */
+  get sideKicksService() {
+    return this.getEntityCollectionService<SideKick>('SideKick');
+  }
 }
+```
 
-/\*_ get the (default) SideKicks service _/
-get sideKicksService() {
-return this.getEntityCollectionService<SideKick>('SideKick');
-}
-}
 </ngrx-code-example>
 
 `AppEntityService` first injects the `EntityServicesElements` helper which it passes straight through to the base class constructor.
@@ -192,15 +235,20 @@ whether it injects `AppEntityServices` or `EntityServices`.
 See it here in the sample app.
 
 <ngrx-code-example header="store/entity/entity-module">
+
+```ts
 @NgModule({
-  imports: [ ... ],
+  imports: [
+    /* ... */
+  ],
   providers: [
     AppEntityServices,
     { provide: EntityServices, useExisting: AppEntityServices },
-    ...
-  ]
+  ],
 })
-export class EntityStoreModule { ... }
+export class EntityStoreModule {}
+```
+
 </ngrx-code-example>
 
 ## Access multiple _EntityCollectionServices_
@@ -212,46 +260,55 @@ even when the `EntityCollectionServices` are customized for each entity type.
 You'll only need **a single injected constructor parameter**, the `EntityServices`.
 
 <ngrx-code-example header="character-container.component.ts">
+
+```ts
 import { EntityCollectionService, EntityServices } from '@ngrx/data';
 import { SideKick } from '../../model';
 import { HeroService, VillainService } from '../../services';
 
-@Component({...})
+@Component({
+  /* ... */
+})
 export class CharacterContainerComponent implements OnInit {
-heroesService: HeroService;
-sideKicksService: EntityCollectionService<SideKick>;
-villainService: VillainService;
+  heroesService: HeroService;
+  sideKicksService: EntityCollectionService<SideKick>;
+  villainService: VillainService;
 
-heroes$: Observable<Hero>;
-...
-constructor(entityServices: EntityServices) {
-this.heroesService = entityServices.getEntityCollectionService('Hero');
-this.sidekicksService = entityServices.getEntityCollectionService('SideKick');
-this.villainService = entityServices.getEntityCollectionService('Villain');
+  heroes$: Observable<Hero>;
+
+  constructor(entityServices: EntityServices) {
+    this.heroesService =
+      entityServices.getEntityCollectionService('Hero');
+    this.sidekicksService =
+      entityServices.getEntityCollectionService('SideKick');
+    this.villainService =
+      entityServices.getEntityCollectionService('Villain');
 
     this.heroes$ = this.heroesService.entities$;
-    ...
+  }
+}
+```
 
-}
-...
-}
 </ngrx-code-example>
 
 An application-specific sub-class of `EntityServices`, such as the `AppEntityServices` above,
 makes this a little nicer.
 
 <ngrx-code-example header="character-container.component.ts (with AppEntityServices)">
+
+```ts
 import { AppEntityServices } from '../../services';
 
-@Component({...})
+@Component({
+  /* ... */
+})
 export class CharacterContainerComponent implements OnInit {
+  heroes$: Observable<Hero>;
 
-heroes$: Observable<Hero>;
-  ...
   constructor(private appEntityServices: AppEntityServices) {
     this.heroes$ = appEntityServices.heroesService.entities$;
-...
+  }
 }
-...
-}
+```
+
 </ngrx-code-example>

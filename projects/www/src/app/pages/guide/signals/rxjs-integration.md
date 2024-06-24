@@ -163,17 +163,20 @@ export class BooksComponent implements OnInit {
   }
 
   addBook(book: Book): void {
-    this.bookMap.update((bookMap) => ({ ...bookMap, [book.id]: book }));
+    this.bookMap.update((bookMap) => ({
+      ...bookMap,
+      [book.id]: book,
+    }));
   }
 }
 ```
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
 For safe handling of API responses, it is recommended to use the `tapResponse` operator from the `@ngrx/operators` package.
 Learn more about it in the [tapResponse](guide/operators/operators#tapresponse) guide.
 
-</div>
+</ngrx-docs-alert>
 
 The @ngrx/signals/rxjs-interop!rxMethod:function function can also be utilized to define reactive methods for SignalStore.
 Further details can be found in the [Reactive Store Methods](guide/signals/signal-store#reactive-store-methods) guide.
@@ -290,7 +293,9 @@ export class NumbersComponent implements OnInit {
   readonly #injector = inject(Injector);
 
   ngOnInit(): void {
-    const logNumber = rxMethod<number>(tap(console.log), { injector: this.#injector });
+    const logNumber = rxMethod<number>(tap(console.log), {
+      injector: this.#injector,
+    });
 
     logNumber(10);
   }

@@ -26,14 +26,20 @@ Examples of **incorrect** code for this rule:
 
 ```ts
 export const customersRefresh = createAction('Refresh Customers');
-export const customersLoadedSuccess = createAction('Customers Loaded Success');
+export const customersLoadedSuccess = createAction(
+  'Customers Loaded Success'
+);
 ```
 
 Examples of **correct** code for this rule:
 
 ```ts
-export const customersRefresh = createAction('[Customers Page] Refresh clicked');
-export const customersLoadedSuccess = createAction('[Customers API] Customers Loaded Success');
+export const customersRefresh = createAction(
+  '[Customers Page] Refresh clicked'
+);
+export const customersLoadedSuccess = createAction(
+  '[Customers API] Customers Loaded Success'
+);
 ```
 
 ## Further reading

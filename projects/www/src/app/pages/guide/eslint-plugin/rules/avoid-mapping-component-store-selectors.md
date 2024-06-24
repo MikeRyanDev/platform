@@ -20,7 +20,9 @@ Examples of **incorrect** code for this rule:
 export class UserStore extends ComponentStore<UserState> {
   loggedInUser$ = this.select((state) => state.loggedInUser);
   //                                           ⚠ Avoid mapping logic outside the selector level.
-  name$ = this.select((state) => state.loggedInUser).pipe(map((user) => user.name));
+  name$ = this.select((state) => state.loggedInUser).pipe(
+    map((user) => user.name)
+  );
 }
 ```
 

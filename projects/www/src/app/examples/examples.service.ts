@@ -8,10 +8,14 @@ const exampleFiles = import.meta.glob(['./**/stackblitz.yml'], {
 
 @Injectable({ providedIn: 'root' })
 export class ExamplesService {
-  async load(element: HTMLElement, exampleName: string) {
-    const config = (await exampleFiles[
+  async getConfig(exampleName: string): Promise<StackblitzConfig> {
+    return (await exampleFiles[
       `./${exampleName}/stackblitz.yml`
     ]()) as StackblitzConfig;
+  }
+
+  async load(element: HTMLElement, exampleName: string) {
+    const config = await this.getConfig(exampleName);
 
     return sdk.embedProject(
       element,

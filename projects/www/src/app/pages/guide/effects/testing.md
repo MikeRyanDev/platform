@@ -77,13 +77,13 @@ effects.search$({
 
 Testing Effects via marble diagrams is particularly useful when the Effect is time sensitive or when the Effect has a lot of behavior.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 For a detailed look on the marble syntax, see [Writing marble tests](https://rxjs.dev/guide/testing/marble-testing).
 
 The `hot`, `cold`, and `toBeObservable` methods are imported from [`jasmine-marbles`](https://www.npmjs.com/package/jasmine-marbles).
 
-</div>
+</ngrx-docs-alert>
 
 <ngrx-code-example header="my.effects.spec.ts">
 
@@ -156,7 +156,9 @@ The callback method provides helper methods to mock Observable streams, and also
 // more info about the API can be found at https://rxjs.dev/guide/testing/marble-testing#api
 testScheduler.run(({ cold, hot, expectObservable }) => {
   // use the `hot` and `cold` helper methods to create the action and service streams
-  actions$ = hot('-a', { a: { type: '[Customers Page] Get Customers' } });
+  actions$ = hot('-a', {
+    a: { type: '[Customers Page] Get Customers' },
+  });
   customersServiceSpy.getAllCustomers.and.returnValue(
     cold('--a|', {
       a: [
@@ -265,7 +267,9 @@ customersServiceSpy.getAllCustomers.and.returnValue(
 );
 
 // dispatch the GET action
-(actions$ as ReplaySubject).next({ type: '[Customers Page] Get Customers' });
+(actions$ as ReplaySubject).next({
+  type: '[Customers Page] Get Customers',
+});
 
 // subscribe to the Effect stream and verify it dispatches a SUCCESS action
 effects.getAll$.subscribe((action) => {
@@ -295,7 +299,10 @@ An example of this is to verify we navigate to the correct page.
 
 ```ts
 it('should navigate to the customers detail page', () => {
-  actions$ = of({ type: '[Customers Page] Customer Selected', name: 'Bob' });
+  actions$ = of({
+    type: '[Customers Page] Customer Selected',
+    name: 'Bob',
+  });
 
   // create a spy to verify the navigation will be called
   spyOn(router, 'navigateByUrl');
@@ -398,19 +405,28 @@ For an Effect with store interaction, use `createMockStore` to create a new inst
 it('should get customers', () => {
   // create the store, and provide selectors.
   const store = createMockStore({
-    selectors: [{ selector: selectCustomers, value: { Bob: { name: 'Bob' } } }],
+    selectors: [
+      { selector: selectCustomers, value: { Bob: { name: 'Bob' } } },
+    ],
   });
 
   // instead of using `provideMockActions`,
   // define the actions stream by creating a new Actions instance
   const actions = new Actions(
     hot('-a--', {
-      a: { type: '[Search Customers Page] Get Customer', name: 'Bob' },
+      a: {
+        type: '[Search Customers Page] Get Customer',
+        name: 'Bob',
+      },
     })
   );
 
   // create the effect
-  const effects = new CustomersEffects(store as Store, actions, customersServiceSpy);
+  const effects = new CustomersEffects(
+    store as Store,
+    actions,
+    customersServiceSpy
+  );
 
   // there is no output, because Bob is already in the Store state
   const expected = hot('----');
@@ -443,7 +459,9 @@ it('loads actors successfully', (done) => {
   const actionsMock$ = of(ActorsPageActions.opened());
 
   loadActors(actionsMock$, actorsServiceMock).subscribe((action) => {
-    expect(action).toEqual(ActorsApiActions.actorsLoadedSuccess({ actors: actorsMock }));
+    expect(action).toEqual(
+      ActorsApiActions.actorsLoadedSuccess({ actors: actorsMock })
+    );
     done();
   });
 });
@@ -451,8 +469,8 @@ it('loads actors successfully', (done) => {
 
 </ngrx-code-example>
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 You can check the `loadActors` effect implementation [here](guide/effects#functional-effects).
 
-</div>
+</ngrx-docs-alert>

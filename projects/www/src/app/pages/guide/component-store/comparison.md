@@ -36,11 +36,11 @@ ComponentStore and Global Store have many benefits, some of which are listed in 
 encapsulate changes and side-effects, make our components smaller, easier to test and more
 performant, but they are also introducing code complexity with **indirections**.
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
-**Note:** It's important to understand what the cost is and why we are adding it.
+It's important to understand what the cost is and why we are adding it.
 
-</div>
+</ngrx-docs-alert>
 
 Both of them bring [push-based architecture](https://medium.com/@thomasburlesonIA/push-based-architectures-with-rxjs-81b327d7c32d), which is the first indirection. The developer can no longer
 get the result of a service method call, instead they would be listening for Observable values
@@ -65,13 +65,13 @@ The scale of state that it works with has to be smaller, which brings another se
   independent instances of the same component
 - provides simpler state management to small/medium sized apps
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The difference between the benefits and trade-offs of Stores make Global Store better suited for
 managing global shared state, where ComponentStore shines managing more local, encapsulated state,
 as well as component UI state.
 
-</div>
+</ngrx-docs-alert>
 
 Depending on the needs of the application, the developer might choose Store or ComponentStore, or,
 in cases of the larger apps, both Store **and** ComponentStore.
@@ -86,7 +86,7 @@ Each ComponentStore is fully responsible for its own state. There could be **man
 ComponentStores, but each one should store its own distinct state.
 
 <figure>
-  <img src="generated/images/guide/component-store/state-structure.png" alt="Comparison of NgRx Store and Component Store state ownership or placement" width="100%" height="100%" />
+  <img src="images/guide/component-store/state-structure.png" alt="Comparison of NgRx Store and Component Store state ownership or placement" width="100%" height="100%" />
 </figure>
 
 ## File structure
@@ -104,5 +104,5 @@ In such cases, it's acceptable to create `ComponentStore<object>` that won't be 
 and would contain a number of selectors.
 
 <figure>
-  <img src="generated/images/guide/component-store/file-structure.png" alt="Comparison of NgRx Store and Component Store file structures" width="100%" height="100%" />
+  <img src="images/guide/component-store/file-structure.png" alt="Comparison of NgRx Store and Component Store file structures" width="100%" height="100%" />
 </figure>

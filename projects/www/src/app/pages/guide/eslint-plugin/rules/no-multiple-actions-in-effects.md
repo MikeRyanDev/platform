@@ -26,7 +26,11 @@ export class Effects {
       ofType(componentLoaded),
       exhaustMap(() =>
         this.dataService.loadEmployeeList().pipe(
-          switchMap((response) => [loadEmployeeListSuccess(response), loadCompanyList(), cleanData()]),
+          switchMap((response) => [
+            loadEmployeeListSuccess(response),
+            loadCompanyList(),
+            cleanData(),
+          ]),
           catchError((error) => loadEmployeeListError(error))
         )
       )

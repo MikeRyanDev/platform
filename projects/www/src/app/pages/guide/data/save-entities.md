@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # Saving Multiple Entities
 
@@ -22,7 +22,7 @@ is consistent with NgRx Data itself:
 - integrates with change tracking.
 - delegates each collection-level change to the (customizable) `entity-collection-reducer-methods`.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 You could implement multiple-entity saves yourself by, prior to version 6.1.
 You could define your own protocol and manipulate the `EntityCache` directly by dispatching `SET_ENTITY_CACHE`
@@ -31,7 +31,7 @@ The collection-level reducers in `entity-collection-reducer-methods` and the NgR
 
 It wouldn't be easy and there are many steps that can be easily overlooked. But you could do it.
 
-</div>
+</ngrx-docs-alert>
 
 ### Save with _EntityCacheDispatcher.saveEntities()_
 
@@ -50,20 +50,24 @@ We assume a server is ready to handle such a request.
 First create the changes (each a `ChangeSetItem`) for the `ChangeSet`.
 
 <ngrx-code-example linenums="false">
+
+```ts
 import { ChangeSetOperation } from '@ngrx/data';
-...
+
 const changes: ChangeSetItem[] = [
   {
     op: ChangeSetOperation.Add,
     entityName: 'Hero',
-    entities: [hero]
+    entities: [hero],
   },
   {
     op: ChangeSetOperation.Delete,
     entityName: 'Villain',
-    entities: [2, 3] // delete by their ids
-  }
+    entities: [2, 3], // delete by their ids
+  },
 ];
+```
+
 </ngrx-code-example>
 
 The `changeSetItemFactory` makes it easier to write these changes.
@@ -82,7 +86,9 @@ Now dispatch a `saveEntities` with a `ChangeSet` for those changes.
 ```typescript
 const changeSet: ChangeSet = { changes, tag: 'Hello World' };
 
-cacheEntityDispatcher.saveEntities(changeSet, saveUrl).subscribe((result) => log('Saved ChangeSet'));
+cacheEntityDispatcher
+  .saveEntities(changeSet, saveUrl)
+  .subscribe((result) => log('Saved ChangeSet'));
 ```
 
 The `saveEntities(changeSet, saveUrl)` returns an `Observable<ChangeSet>`,
@@ -117,11 +123,11 @@ the observable emits the `ChangeSet` (or error).
 
 The subscriber to that observable now knows that this particular _save entities_ request is "done".
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 This complicated dance is standard NgRx. Fortunately, all you have to know is that you can call `saveEntities()` with the `ChangeSet` and URL, then wait for the returned observable to emit.
 
-</div>
+</ngrx-docs-alert>
 
 #### _ChangeSet_
 
@@ -130,20 +136,21 @@ The `ChangeSet` interface is a simple structure with only one critical property,
 
 <ngrx-code-example header="ChangeSet" linenums="false">
 
+```ts
 export interface ChangeSet<T = any> {
-/\*_ An array of ChangeSetItems to be processed in the array order _/
-changes: ChangeSetItem[];
+  /* An array of ChangeSetItems to be processed in the array order */
+  changes: ChangeSetItem[];
 
-/\*\*
-
-- An arbitrary, serializable object that should travel with the ChangeSet.
-- Meaningful to the ChangeSet producer and consumer. Ignored by NgRx Data.
-  \*/
+  /**
+    - An arbitrary, serializable object that should travel with the ChangeSet.
+    - Meaningful to the ChangeSet producer and consumer. Ignored by NgRx Data.
+  */
   extras?: T;
 
-/\*_ An arbitrary string, identifying the ChangeSet and perhaps its purpose _/
-tag?: string;
+  /* An arbitrary string, identifying the ChangeSet and perhaps its purpose */
+  tag?: string;
 }
+```
 
 </ngrx-code-example>
 
@@ -159,28 +166,36 @@ For example,
 There are four `ChangeSetOperations`
 
 <ngrx-code-example header="ChangeSetOperation">
+
+```ts
 export enum ChangeSetOperation {
   Add = 'Add',
   Delete = 'Delete',
   Update = 'Update',
-  Upsert = 'Upsert'
+  Upsert = 'Upsert',
 }
+```
+
 </ngrx-code-example>
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 `Upsert` is a request to treat the entities in the `ChangeSetItem` as _either_ new entities or updates to _existing_ entities.
 
-</div>
+</ngrx-docs-alert>
 
 Each kind of `ChangeSetItem` follows a pattern similar to `ChangeSetAdd`.
 
 <ngrx-code-example header="ChangeSetAdd">
+
+```ts
 export interface ChangeSetAdd<T = any> {
   op: ChangeSetOperation.Add;
   entityName: string;
   entities: T[];
 }
+```
+
 </ngrx-code-example>
 
 The `ChangeSetItem` flavors all have `op`, `entityName` and `entities` properties.
@@ -234,7 +249,7 @@ Perhaps better, you can let the `EntityCacheEffects` handle this for you in a ma
 The `EntityCacheEffects.saveEntities$` effect listens for `SAVE_ENTITIES` and makes a request to the designated URL via the (new) `EntityCacheDataService`.
 It takes the response and dispatches either a `SAVE_ENTITIES_SUCCESS` or `SAVE_ENTITIES_ERROR`, as appropriate.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 If you prefer to handle server interaction yourself,
 you can disable the `EntityCacheEffects` by providing a null implementation, in your `NgModule`, e.g.,
@@ -246,7 +261,7 @@ you can disable the `EntityCacheEffects` by providing a null implementation, in 
 }
 ```
 
-</div>
+</ngrx-docs-alert>
 
 #### EntityCacheDataService
 
@@ -269,13 +284,13 @@ As always, you can provide an alternative implementation:
 If the save was pessimistic, the EntityCache is unchanged until the server responds.
 You need the results from the server to update the cache.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The changes are already in cache with an optimistic save.
 But the server might have made additional changes to the data,
 in which case you'd want to (re)apply the server response data to cache.
 
-</div>
+</ngrx-docs-alert>
 
 The server API is supposed to return all changed entity data in the
 form of a `ChangeSet`.
@@ -321,12 +336,12 @@ Before v6.1, the _save_ `EntityOps` only worked for single entities.
 This version adds multi-entity save actions to `EntityOp`:
 `SAVE_ADD_MANY...`,`SAVE_DELETE_MANY...`, `SAVE_UPDATE_MANY...`,`SAVE_UPSERT_MANY...`.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 These ops do not have corresponding `EntityCommands` because a multi-entity save is dispatched (via `SAVE_ENTITIES..` actions) to the `EntityCache` reducer,
 not to a collection reducer (at least not in this version).
 
-</div>
+</ngrx-docs-alert>
 
 #### Transactions
 
@@ -365,7 +380,7 @@ The `EntityCacheEffects.saveEntitiesCancel$` watches for this action and is pipe
 the `EntityCacheEffects.saveEntities$`, where it can try to cancel the save operation
 or at least prevent the server response from updating the cache.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 It's not obvious that this is ever a great idea.
 You cannot tell the server to cancel this way and cannot know if the server did or did not save.
@@ -378,4 +393,4 @@ The effect will issue a `SAVE_ENTITIES_CANCELED` action instead.
 The `EntityCache` reducer ignores this action but you can listen for it among the store actions
 and thus know that the cancellation took effect on the client.
 
-</div>
+</ngrx-docs-alert>

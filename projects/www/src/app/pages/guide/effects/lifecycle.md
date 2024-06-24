@@ -37,7 +37,10 @@ import { tap } from 'rxjs/operators';
 export class LogEffects {
   constructor(private actions$: Actions) {}
 
-  logActions$ = createEffect(() => this.actions$.pipe(tap((action) => console.log(action))), { dispatch: false });
+  logActions$ = createEffect(
+    () => this.actions$.pipe(tap((action) => console.log(action))),
+    { dispatch: false }
+  );
 }
 ```
 
@@ -80,7 +83,9 @@ export class AuthEffects {
         exhaustMap((action) =>
           this.authService.login(action.credentials).pipe(
             map((user) => AuthApiActions.loginSuccess({ user })),
-            catchError((error) => of(AuthApiActions.loginFailure({ error })))
+            catchError((error) =>
+              of(AuthApiActions.loginFailure({ error }))
+            )
           )
         )
         // Errors are handled and it is safe to disable resubscription
@@ -88,7 +93,10 @@ export class AuthEffects {
     { useEffectsErrorHandler: false }
   );
 
-  constructor(private actions$: Actions, private authService: AuthService) {}
+  constructor(
+    private actions$: Actions,
+    private authService: AuthService
+  ) {}
 }
 ```
 
@@ -112,9 +120,15 @@ import { retryWhen, mergeMap } from 'rxjs/operators';
 import { Action } from '@ngrx/store';
 import { EffectsModule, EFFECTS_ERROR_HANDLER } from '@ngrx/effects';
 import { MoviesEffects } from './effects/movies.effects';
-import { CustomErrorHandler, isRetryable } from '../custom-error-handler';
+import {
+  CustomErrorHandler,
+  isRetryable,
+} from '../custom-error-handler';
 
-export function effectResubscriptionHandler<T extends Action>(observable$: Observable<T>, errorHandler?: CustomErrorHandler): Observable<T> {
+export function effectResubscriptionHandler<T extends Action>(
+  observable$: Observable<T>,
+  errorHandler?: CustomErrorHandler
+): Observable<T> {
   return observable$.pipe(
     retryWhen((errors) =>
       errors.pipe(
@@ -182,7 +196,13 @@ Usage:
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { exhaustMap, takeUntil, tap } from 'rxjs/operators';
-import { Actions, OnRunEffects, EffectNotification, ofType, createEffect } from '@ngrx/effects';
+import {
+  Actions,
+  OnRunEffects,
+  EffectNotification,
+  ofType,
+  createEffect,
+} from '@ngrx/effects';
 
 @Injectable()
 export class UserEffects implements OnRunEffects {
@@ -202,7 +222,11 @@ export class UserEffects implements OnRunEffects {
   ngrxOnRunEffects(resolvedEffects$: Observable<EffectNotification>) {
     return this.actions$.pipe(
       ofType('LOGGED_IN'),
-      exhaustMap(() => resolvedEffects$.pipe(takeUntil(this.actions$.pipe(ofType('LOGGED_OUT')))))
+      exhaustMap(() =>
+        resolvedEffects$.pipe(
+          takeUntil(this.actions$.pipe(ofType('LOGGED_OUT')))
+        )
+      )
     );
   }
 }

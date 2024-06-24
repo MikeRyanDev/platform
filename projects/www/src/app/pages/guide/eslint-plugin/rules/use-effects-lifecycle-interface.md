@@ -34,7 +34,11 @@ class Effect {
   ngrxOnRunEffects(resolvedEffects$: Observable<EffectNotification>) {
     return this.actions$.pipe(
       ofType('LOGGED_IN'),
-      exhaustMap(() => resolvedEffects$.pipe(takeUntil(this.actions$.pipe(ofType('LOGGED_OUT')))))
+      exhaustMap(() =>
+        resolvedEffects$.pipe(
+          takeUntil(this.actions$.pipe(ofType('LOGGED_OUT')))
+        )
+      )
     );
   }
 }
@@ -60,7 +64,11 @@ class Effect implements OnRunEffects {
   ngrxOnRunEffects(resolvedEffects$: Observable<EffectNotification>) {
     return this.actions$.pipe(
       ofType('LOGGED_IN'),
-      exhaustMap(() => resolvedEffects$.pipe(takeUntil(this.actions$.pipe(ofType('LOGGED_OUT')))))
+      exhaustMap(() =>
+        resolvedEffects$.pipe(
+          takeUntil(this.actions$.pipe(ofType('LOGGED_OUT')))
+        )
+      )
     );
   }
 }

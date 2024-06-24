@@ -123,3 +123,37 @@ h5,
 h6 {
   font-family: 'Oxanium', sans-serif;
 }
+
+@keyframes entrance {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes exit {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+::view-transition-old(markdown-article) {
+  animation: exit 0.25s ease-out 0s 1 normal forwards;
+}
+
+::view-transition-new(markdown-article) {
+  animation: entrance 0.25s ease-out 0s 1 normal forwards;
+}
+
+analog-markdown-route > div {
+  view-transition-name: markdown-article;
+}

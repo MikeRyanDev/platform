@@ -12,31 +12,41 @@ against the collection type. The method takes an object with 2 properties for co
 Usage:
 
 <ngrx-code-example header="user.reducer.ts">
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+
+```ts
+import {
+  EntityState,
+  EntityAdapter,
+  createEntityAdapter,
+} from '@ngrx/entity';
 
 export interface User {
-id: string;
-name: string;
+  id: string;
+  name: string;
 }
 
 export interface State extends EntityState<User> {
-// additional entities state properties
-selectedUserId: string | null;
+  // additional entities state properties
+  selectedUserId: string | null;
 }
 
 export function selectUserId(a: User): string {
-//In this case this would be optional since primary key is id
-return a.id;
+  //In this case this would be optional since primary key is id
+  return a.id;
 }
 
 export function sortByName(a: User, b: User): number {
-return a.name.localeCompare(b.name);
+  return a.name.localeCompare(b.name);
 }
 
-export const adapter: EntityAdapter<User> = createEntityAdapter<User>({
-selectId: selectUserId,
-sortComparer: sortByName,
-});
+export const adapter: EntityAdapter<User> = createEntityAdapter<User>(
+  {
+    selectId: selectUserId,
+    sortComparer: sortByName,
+  }
+);
+```
+
 </ngrx-code-example>
 
 ## Adapter Methods
@@ -52,25 +62,33 @@ Returns the `initialState` for entity state based on the provided type. Addition
 Usage:
 
 <ngrx-code-example header="user.reducer.ts">
+
+```ts
 import { Action, createReducer } from '@ngrx/store';
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import {
+  EntityState,
+  EntityAdapter,
+  createEntityAdapter,
+} from '@ngrx/entity';
 
 export interface User {
-id: string;
-name: string;
+  id: string;
+  name: string;
 }
 
 export interface State extends EntityState<User> {
-// additional entities state properties
-selectedUserId: string | null;
+  // additional entities state properties
+  selectedUserId: string | null;
 }
 
 export const initialState: State = adapter.getInitialState({
-// additional entity state properties
-selectedUserId: null,
+  // additional entity state properties
+  selectedUserId: null,
 });
 
 export const userReducer = createReducer(initialState);
+```
+
 </ngrx-code-example>
 
 ## Adapter Collection Methods
@@ -97,112 +115,170 @@ state if no changes were made.
 Usage:
 
 <ngrx-code-example header="user.model.ts">
+
+```ts
 export interface User {
   id: string;
   name: string;
 }
+```
+
 </ngrx-code-example>
 
 <ngrx-code-example header="user.actions.ts">
+
+```ts
 import { createAction, props } from '@ngrx/store';
-import { Update, EntityMap, EntityMapOne, Predicate } from '@ngrx/entity';
+import {
+  Update,
+  EntityMap,
+  EntityMapOne,
+  Predicate,
+} from '@ngrx/entity';
 
 import { User } from '../models/user.model';
 
-export const loadUsers = createAction('[User/API] Load Users', props<{ users: User[] }>());
-export const setUsers = createAction('[User/API] Set Users', props<{ users: User[] }>());
-export const addUser = createAction('[User/API] Add User', props<{ user: User }>());
-export const setUser = createAction('[User/API] Set User', props<{ user: User }>());
-export const upsertUser = createAction('[User/API] Upsert User', props<{ user: User }>());
-export const addUsers = createAction('[User/API] Add Users', props<{ users: User[] }>());
-export const upsertUsers = createAction('[User/API] Upsert Users', props<{ users: User[] }>());
-export const updateUser = createAction('[User/API] Update User', props<{ update: Update<User> }>());
-export const updateUsers = createAction('[User/API] Update Users', props<{ updates: Update<User>[] }>());
-export const mapUser = createAction('[User/API] Map User', props<{ entityMap: EntityMapOne<User> }>());
-export const mapUsers = createAction('[User/API] Map Users', props<{ entityMap: EntityMap<User> }>());
-export const deleteUser = createAction('[User/API] Delete User', props<{ id: string }>());
-export const deleteUsers = createAction('[User/API] Delete Users', props<{ ids: string[] }>());
-export const deleteUsersByPredicate = createAction('[User/API] Delete Users By Predicate', props<{ predicate: Predicate<User> }>());
+export const loadUsers = createAction(
+  '[User/API] Load Users',
+  props<{ users: User[] }>()
+);
+export const setUsers = createAction(
+  '[User/API] Set Users',
+  props<{ users: User[] }>()
+);
+export const addUser = createAction(
+  '[User/API] Add User',
+  props<{ user: User }>()
+);
+export const setUser = createAction(
+  '[User/API] Set User',
+  props<{ user: User }>()
+);
+export const upsertUser = createAction(
+  '[User/API] Upsert User',
+  props<{ user: User }>()
+);
+export const addUsers = createAction(
+  '[User/API] Add Users',
+  props<{ users: User[] }>()
+);
+export const upsertUsers = createAction(
+  '[User/API] Upsert Users',
+  props<{ users: User[] }>()
+);
+export const updateUser = createAction(
+  '[User/API] Update User',
+  props<{ update: Update<User> }>()
+);
+export const updateUsers = createAction(
+  '[User/API] Update Users',
+  props<{ updates: Update<User>[] }>()
+);
+export const mapUser = createAction(
+  '[User/API] Map User',
+  props<{ entityMap: EntityMapOne<User> }>()
+);
+export const mapUsers = createAction(
+  '[User/API] Map Users',
+  props<{ entityMap: EntityMap<User> }>()
+);
+export const deleteUser = createAction(
+  '[User/API] Delete User',
+  props<{ id: string }>()
+);
+export const deleteUsers = createAction(
+  '[User/API] Delete Users',
+  props<{ ids: string[] }>()
+);
+export const deleteUsersByPredicate = createAction(
+  '[User/API] Delete Users By Predicate',
+  props<{ predicate: Predicate<User> }>()
+);
 export const clearUsers = createAction('[User/API] Clear Users');
+```
 
 </ngrx-code-example>
 
 <ngrx-code-example header="user.reducer.ts">
+
+```ts
 import { Action, createReducer, on } from '@ngrx/store';
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import {
+  EntityState,
+  EntityAdapter,
+  createEntityAdapter,
+} from '@ngrx/entity';
 import { User } from '../models/user.model';
 import * as UserActions from '../actions/user.actions';
 
 export interface State extends EntityState<User> {
-// additional entities state properties
-selectedUserId: string | null;
+  // additional entities state properties
+  selectedUserId: string | null;
 }
 
-export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
+export const adapter: EntityAdapter<User> =
+  createEntityAdapter<User>();
 
 export const initialState: State = adapter.getInitialState({
-// additional entity state properties
-selectedUserId: null,
+  // additional entity state properties
+  selectedUserId: null,
 });
 
 export const userReducer = createReducer(
-initialState,
-on(UserActions.addUser, (state, { user }) => {
-return adapter.addOne(user, state)
-}),
-on(UserActions.setUser, (state, { user }) => {
-return adapter.setOne(user, state)
-}),
-on(UserActions.upsertUser, (state, { user }) => {
-return adapter.upsertOne(user, state);
-}),
-on(UserActions.addUsers, (state, { users }) => {
-return adapter.addMany(users, state);
-}),
-on(UserActions.upsertUsers, (state, { users }) => {
-return adapter.upsertMany(users, state);
-}),
-on(UserActions.updateUser, (state, { update }) => {
-return adapter.updateOne(update, state);
-}),
-on(UserActions.updateUsers, (state, { updates }) => {
-return adapter.updateMany(updates, state);
-}),
-on(UserActions.mapUser, (state, { entityMap }) => {
-return adapter.mapOne(entityMap, state);
-}),
-on(UserActions.mapUsers, (state, { entityMap }) => {
-return adapter.map(entityMap, state);
-}),
-on(UserActions.deleteUser, (state, { id }) => {
-return adapter.removeOne(id, state);
-}),
-on(UserActions.deleteUsers, (state, { ids }) => {
-return adapter.removeMany(ids, state);
-}),
-on(UserActions.deleteUsersByPredicate, (state, { predicate }) => {
-return adapter.removeMany(predicate, state);
-}),
-on(UserActions.loadUsers, (state, { users }) => {
-return adapter.setAll(users, state);
-}),
-on(UserActions.setUsers, (state, { users }) => {
-return adapter.setMany(users, state);
-}),
-on(UserActions.clearUsers, state => {
-return adapter.removeAll({ ...state, selectedUserId: null });
-})
+  initialState,
+  on(UserActions.addUser, (state, { user }) => {
+    return adapter.addOne(user, state);
+  }),
+  on(UserActions.setUser, (state, { user }) => {
+    return adapter.setOne(user, state);
+  }),
+  on(UserActions.upsertUser, (state, { user }) => {
+    return adapter.upsertOne(user, state);
+  }),
+  on(UserActions.addUsers, (state, { users }) => {
+    return adapter.addMany(users, state);
+  }),
+  on(UserActions.upsertUsers, (state, { users }) => {
+    return adapter.upsertMany(users, state);
+  }),
+  on(UserActions.updateUser, (state, { update }) => {
+    return adapter.updateOne(update, state);
+  }),
+  on(UserActions.updateUsers, (state, { updates }) => {
+    return adapter.updateMany(updates, state);
+  }),
+  on(UserActions.mapUser, (state, { entityMap }) => {
+    return adapter.mapOne(entityMap, state);
+  }),
+  on(UserActions.mapUsers, (state, { entityMap }) => {
+    return adapter.map(entityMap, state);
+  }),
+  on(UserActions.deleteUser, (state, { id }) => {
+    return adapter.removeOne(id, state);
+  }),
+  on(UserActions.deleteUsers, (state, { ids }) => {
+    return adapter.removeMany(ids, state);
+  }),
+  on(UserActions.deleteUsersByPredicate, (state, { predicate }) => {
+    return adapter.removeMany(predicate, state);
+  }),
+  on(UserActions.loadUsers, (state, { users }) => {
+    return adapter.setAll(users, state);
+  }),
+  on(UserActions.setUsers, (state, { users }) => {
+    return adapter.setMany(users, state);
+  }),
+  on(UserActions.clearUsers, (state) => {
+    return adapter.removeAll({ ...state, selectedUserId: null });
+  })
 );
 
-export const getSelectedUserId = (state: State) => state.selectedUserId;
+export const getSelectedUserId = (state: State) =>
+  state.selectedUserId;
 
 // get the selectors
-const {
-selectIds,
-selectEntities,
-selectAll,
-selectTotal,
-} = adapter.getSelectors();
+const { selectIds, selectEntities, selectAll, selectTotal } =
+  adapter.getSelectors();
 
 // select the array of user ids
 export const selectUserIds = selectIds;
@@ -215,6 +291,8 @@ export const selectAllUsers = selectAll;
 
 // select the total user count
 export const selectUserTotal = selectTotal;
+```
+
 </ngrx-code-example>
 
 ### Entity Updates
@@ -223,7 +301,7 @@ There are a few caveats to be aware of when updating entities using the entity a
 
 The first is that `updateOne` and `updateMany` make use of the `Update<T>` interface shown below. This supports partial updates.
 
-```typescript
+```ts
 interface UpdateStr<T> {
   id: string;
   changes: Partial<T>;
@@ -248,6 +326,8 @@ The `getSelectors` method takes a selector function as its only argument to sele
 Usage:
 
 <ngrx-code-example header="index.ts">
+
+```ts
 import {
   createSelector,
   createFeatureSelector,
@@ -256,39 +336,42 @@ import {
 import * as fromUser from './user.reducer';
 
 export interface State {
-users: fromUser.State;
+  users: fromUser.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
-users: fromUser.reducer,
+  users: fromUser.reducer,
 };
 
-export const selectUserState = createFeatureSelector<fromUser.State>('users');
+export const selectUserState =
+  createFeatureSelector<fromUser.State>('users');
 
 export const selectUserIds = createSelector(
-selectUserState,
-fromUser.selectUserIds // shorthand for usersState => fromUser.selectUserIds(usersState)
+  selectUserState,
+  fromUser.selectUserIds // shorthand for usersState => fromUser.selectUserIds(usersState)
 );
 export const selectUserEntities = createSelector(
-selectUserState,
-fromUser.selectUserEntities
+  selectUserState,
+  fromUser.selectUserEntities
 );
 export const selectAllUsers = createSelector(
-selectUserState,
-fromUser.selectAllUsers
+  selectUserState,
+  fromUser.selectAllUsers
 );
 export const selectUserTotal = createSelector(
-selectUserState,
-fromUser.selectUserTotal
+  selectUserState,
+  fromUser.selectUserTotal
 );
 export const selectCurrentUserId = createSelector(
-selectUserState,
-fromUser.getSelectedUserId
+  selectUserState,
+  fromUser.getSelectedUserId
 );
 
 export const selectCurrentUser = createSelector(
-selectUserEntities,
-selectCurrentUserId,
-(userEntities, userId) => userId && userEntities[userId]
+  selectUserEntities,
+  selectCurrentUserId,
+  (userEntities, userId) => userId && userEntities[userId]
 );
+```
+
 </ngrx-code-example>

@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  Input,
   PLATFORM_ID,
   ViewEncapsulation,
   inject,
@@ -18,7 +19,8 @@ import { ExamplesService } from '@ngrx-io/app/examples/examples.service';
   encapsulation: ViewEncapsulation.None,
   styles: [
     `
-      ngrx-example iframe {
+      ngrx-stackblitz iframe,
+      ngrx-docs-stackblitz iframe {
         display: block;
         width: 100%;
         height: 800px;
@@ -30,12 +32,12 @@ import { ExamplesService } from '@ngrx-io/app/examples/examples.service';
 export class StackblitzComponent implements AfterViewInit {
   examplesService = inject(ExamplesService);
   platformId = inject(PLATFORM_ID);
-  name = input.required<string>();
+  @Input() name: string = '__base';
   exampleRef = viewChild.required<ElementRef<HTMLDivElement>>('example');
 
   ngAfterViewInit(): void {
     if (isPlatformServer(this.platformId)) return;
 
-    this.examplesService.load(this.exampleRef().nativeElement, this.name());
+    this.examplesService.load(this.exampleRef().nativeElement, this.name);
   }
 }

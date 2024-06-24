@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # Entity DataService
 
@@ -27,7 +27,7 @@ Each that return `Observables`:
 | `update(update: Update<T>, httpOptions?: HttpOptions): Observable<T>`                                | Update an existing entity                 | `PUT` /api/hero/5                |
 | `upsert(entity: T, httpOptions?: HttpOptions): Observable<T>`                                        | Upsert an entity (if api supports upsert) | `POST` /api/hero/5               |
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 `QueryParams` is a _parameter-name/value_ map
 You can also supply the query string itself.
@@ -43,7 +43,7 @@ to the Data Service's http requests. The `DefaultDataService` uses this data to 
 to pass to `HttpClient` requests. This allows the configuration of Http Query Parameters and/or
 Http Headers from the `EntityCollectionDataService` api.
 
-</div>
+</ngrx-docs-alert>
 
 The default data service methods return the `Observables` returned by the corresponding Angular `HttpClient` methods.
 
@@ -51,11 +51,11 @@ Your API should return an object in the shape of the return type for each data s
 should create the entity and then return the full entity matching `T` as that is the value that will be set as the record in the store for that entities primary
 key. The one method that differs from the others is `delete`. `delete` requires a response type of the entities primary key, `string | number`, instead of the full object, `T`, that was deleted.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 If you create your own data service alternatives, they should return similar `Observables`.
 
-</div>
+</ngrx-docs-alert>
 
 ## Register data services
 
@@ -67,11 +67,11 @@ You can add custom data services to it by creating instances of those classes an
 
 2.  register several data services at the same time with by calling `registerServices` with an _entity-name/service_ map.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 You can create and import a module that registers your custom data services as shown in the _EntityDataService_ [tests](https://github.com/ngrx/platform/blob/main/modules/data/spec/dataservices/entity-data.service.spec.ts)
 
-</div>
+</ngrx-docs-alert>
 
 If you decide to register an entity data service, be sure to do so _before_ you ask NgRx Data to perform a persistence operation for that entity.
 
@@ -177,6 +177,8 @@ In the sample app the `HeroDataService` derives from the NgRx Data `DefaultDataS
 It only overrides what it really needs.
 
 <ngrx-code-example header="store/entity/hero-data-service.ts" linenums="false">
+
+```ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
@@ -184,7 +186,7 @@ import {
   DefaultDataService,
   HttpUrlGenerator,
   Logger,
-  QueryParams
+  QueryParams,
 } from '@ngrx/data';
 
 import { Observable } from 'rxjs';
@@ -193,27 +195,41 @@ import { Hero } from '../../core';
 
 @Injectable()
 export class HeroDataService extends DefaultDataService<Hero> {
-constructor(http: HttpClient, httpUrlGenerator: HttpUrlGenerator, logger: Logger) {
-super('Hero', http, httpUrlGenerator);
-logger.log('Created custom Hero EntityDataService');
-}
+  constructor(
+    http: HttpClient,
+    httpUrlGenerator: HttpUrlGenerator,
+    logger: Logger
+  ) {
+    super('Hero', http, httpUrlGenerator);
+    logger.log('Created custom Hero EntityDataService');
+  }
 
-getAll(): Observable<Hero[]> {
-return super.getAll().pipe(map(heroes => heroes.map(hero => this.mapHero(hero))));
-}
+  getAll(): Observable<Hero[]> {
+    return super
+      .getAll()
+      .pipe(
+        map((heroes) => heroes.map((hero) => this.mapHero(hero)))
+      );
+  }
 
-getById(id: string | number): Observable<Hero> {
-return super.getById(id).pipe(map(hero => this.mapHero(hero)));
-}
+  getById(id: string | number): Observable<Hero> {
+    return super.getById(id).pipe(map((hero) => this.mapHero(hero)));
+  }
 
-getWithQuery(params: string | QueryParams): Observable<Hero[]> {
-return super.getWithQuery(params).pipe(map(heroes => heroes.map(hero => this.mapHero(hero))));
-}
+  getWithQuery(params: string | QueryParams): Observable<Hero[]> {
+    return super
+      .getWithQuery(params)
+      .pipe(
+        map((heroes) => heroes.map((hero) => this.mapHero(hero)))
+      );
+  }
 
-private mapHero(hero: Hero): Hero {
-return { ...hero, dateLoaded: new Date() };
+  private mapHero(hero: Hero): Hero {
+    return { ...hero, dateLoaded: new Date() };
+  }
 }
-}
+```
+
 </ngrx-code-example>
 
 This `HeroDataService` hooks into the _get_ operations to set the `Hero.dateLoaded` on fetched hero entities.
@@ -224,22 +240,28 @@ Finally, we must tell NgRx Data about this new data service.
 The sample app provides `HeroDataService` and registers it by calling the `registerService()` method on the `EntityDataService` in the app's _entity store module_:
 
 <ngrx-code-example header="store/entity-store.module.ts" linenums="false">
+
+```ts
 import { EntityDataService } from '@ngrx/data'; // <-- import the NgRx Data data service registry
 
 import { HeroDataService } from './hero-data-service';
 
 @NgModule({
-imports: [ ... ],
-providers: [ HeroDataService ] // <-- provide the data service
+  imports: [
+    /* ... */
+  ],
+  providers: [HeroDataService], // <-- provide the data service
 })
 export class EntityStoreModule {
-constructor(
-entityDataService: EntityDataService,
-heroDataService: HeroDataService,
-) {
-entityDataService.registerService('Hero', heroDataService); // <-- register it
+  constructor(
+    entityDataService: EntityDataService,
+    heroDataService: HeroDataService
+  ) {
+    entityDataService.registerService('Hero', heroDataService); // <-- register it
+  }
 }
-}
+```
+
 </ngrx-code-example>
 
 ### A custom _DataService_

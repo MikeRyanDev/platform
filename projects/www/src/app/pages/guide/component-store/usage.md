@@ -13,16 +13,16 @@ The types of state that developers typically deal with in applications are:
 - **Local UI State**. The state within a component itself. E.g. `isEnabled` toggle state of Toggle Component.
 
 <figure>
-  <img src="generated/images/guide/component-store/types-of-state.png" alt="Types of state in a typical SPA" width="100%" height="100%" />
+  <img src="images/guide/component-store/types-of-state.png" alt="Types of state in a typical SPA" width="100%" height="100%" />
 </figure>
 
 There are more types of states, but these are the most important ones in the context of state management.
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
 Synchronizing these states is one of the most complex tasks that developers have to solve.
 
-</div>
+</ngrx-docs-alert>
 
 Here is a small example to demonstrate how even a simple task might involve all of them:
 
@@ -34,11 +34,11 @@ Here is a small example to demonstrate how even a simple task might involve all 
 
 This was a very simple example. Typically developers have to solve many problems that are more interconnected. What if the user is not logged in? Should we wait until the new favorite state is persisted to the backend and only then show disabled state or should we do this optimistically? and so on.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 Understanding these types of state helps us define our usage of ComponentStore.
 
-</div>
+</ngrx-docs-alert>
 
 ## Use Case 1: Local UI State
 
@@ -46,32 +46,33 @@ Understanding these types of state helps us define our usage of ComponentStore.
 
 The simplest example usage of `ComponentStore` is **reactive _Local UI State_**.
 
-<div class="callout is-helpful">
-<header>A note about component reactivity</header>
+<ngrx-docs-alert type="help">
+
+### A note about component reactivity
 
 One of the ways to improve the performance of the application is to use the `OnPush` change detection strategy. However, contrary to the popular belief, we do not always need to tell Angular's change detection to `markForCheck()` or `detectChanges()` (or the Angular Ivy alternatives). As pointed out in [this article on change detection](https://indepth.dev/the-last-guide-for-angular-change-detection-youll-ever-need/), if the event originates from the component itself, the component will be dirty checked.
 This means that common presentational (aka dumb) components that interact with the rest of the application with Input(s)/Output(s) do not have to be overcomplicated with reactive state, even though we did it to the Toggle Component mentioned above.
 
-</div>
+</ngrx-docs-alert>
 
 Having said that, in most cases making _Local UI State_ **reactive** is beneficial:
 
 - For Zoneless application, the `async` pipe can easily be substituted with a Zoneless alternative such as the [`ngrxPush` pipe](guide/component/push)
 - For components with non-trivial business logic, reactivity can organize the state better by clearly separating actual state from derived values and identifying side-effects.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 ComponentStore is not the only reactive _Local UI State_ holder - sometimes `FormControl`s are good enough. They contain the state and they have reactive APIs.
 
-</div>
+</ngrx-docs-alert>
 
 Here's the simplified `SlideToggleComponent` example which uses `ComponentStore` for _Local UI State_. In this example, the `ComponentStore` is provided directly by the component itself, which might not be the best choice for most of the use cases of `ComponentStore`. Instead, consider a service that `extends ComponentStore`.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 You can see the full example at StackBlitz: <live-example name="component-store-slide-toggle"></live-example>
 
-</div>
+</ngrx-docs-alert>
 
 <code-tabs linenums="true">
   <code-pane
@@ -97,11 +98,11 @@ First, the state for the component needs to be identified. In `SlideToggleCompon
 
 Then we need to provide `ComponentStore` in the component's providers, so that each new instance of `SlideToggleComponent` has its own `ComponentStore`. It also has to be injected into the constructor.
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
 In this example `ComponentStore` is provided directly in the component. This works for simple cases, however in real-world cases it is recommended to create a separate Service, for example `SlideToggleStore`, that would extend `ComponentStore` and would contain all the business logic. This new Service is then provided in the component. See examples below.
 
-</div>
+</ngrx-docs-alert>
 
 <ngrx-code-example linenums="false"
   header="src/app/slide-toggle.component.ts"
@@ -112,7 +113,7 @@ Next, the default state for the component needs to be set. It could be done lazi
 
 State is initialized by calling `setState` and passing an object that matches the interface of `SlideToggleState`.
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
 `setState` could be called with either an object or a callback.
 
@@ -120,7 +121,7 @@ When it is called with an object, state is initialized or reset to that object.
 
 When it is called with a callback, the state is updated.
 
-</div>
+</ngrx-docs-alert>
 
 <ngrx-code-example
   header="src/app/slide-toggle.component.ts"
@@ -160,11 +161,11 @@ This example does not have a lot of business logic, however it is still fully re
 
 Extracting the business logic of a component into a separate Service also helps reduce the cognitive load while reading the components code.
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
 A Service that extends ComponentStore and contains business logic of the component brings many advantages. **This is also the recommended usage of ComponentStore**.
 
-</div>
+</ngrx-docs-alert>
 
 `ComponentStore` was designed with such an approach in mind. The main APIs of `ComponentStore` (`updater`, `select` and `effect`) are meant to wrap the **HOW** state is changed, extracted or effected, and then called with arguments.
 
@@ -174,14 +175,14 @@ Here's the source code of the [Material's paginator.ts](https://github.com/angul
 
 What we can see is that while the _"PaginatorComponent providing ComponentStore"_ example already makes the component a lot smaller, reactive, removes `this._changeDetectorRef.markForCheck()` and organizes it into distinct "read"/"write"/"effect" buckets, it still could be hard to read. The _"PaginatorComponent with PaginatorStore"_ example adds readability and further improves the testability of behaviors and business logic.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 You can see the examples at StackBlitz:
 
 - "PaginatorComponent providing ComponentStore" <live-example name="component-store-paginator" noDownload></live-example>
 - "PaginatorComponent with PaginatorStore Service" <live-example name="component-store-paginator-service" noDownload></live-example>
 
-</div>
+</ngrx-docs-alert>
 
 <code-tabs linenums="true">
   <code-pane
@@ -234,11 +235,11 @@ Effects are used to perform additional validation and get extra information from
   </code-pane>
 </code-tabs>
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 `page$` would emit `PageEvent` when page size or page index changes, however in some cases updater would update both of these properties at the same time. To avoid "intermediary" emissions, `page$` selector is using **`{debounce: true}`** configuration. More about debouncing can be found in [selector section](guide/component-store/read#debounce-selectors).
 
-</div>
+</ngrx-docs-alert>
 
 ### Local UI State patterns
 

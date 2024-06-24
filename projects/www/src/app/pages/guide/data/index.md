@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # @ngrx/data
 
@@ -69,20 +69,24 @@ Even if you have only one instance of an entity type, it must be held within an 
 A `EntityMetadataMap` tells NgRx Data about your entities. Add a property to the set for each entity name.
 
 <ngrx-code-example header="entity-metadata.ts">
+
+```ts
 import { EntityMetadataMap } from '@ngrx/data';
 
 const entityMetadata: EntityMetadataMap = {
-Hero: {},
-Villain: {}
+  Hero: {},
+  Villain: {},
 };
 
 // because the plural of "hero" is not "heros"
 const pluralNames = { Hero: 'Heroes' };
 
 export const entityConfig = {
-entityMetadata,
-pluralNames
+  entityMetadata,
+  pluralNames,
 };
+```
+
 </ngrx-code-example>
 
 Export the entity configuration to be used when registering it in your `AppModule`.
@@ -92,22 +96,29 @@ Export the entity configuration to be used when registering it in your `AppModul
 Once the entity configuration is created, you need to put it into the root store for NgRx. This is done by importing the `entityConfig` and then passing it to the `EntityDataModule.forRoot()` function.
 
 <ngrx-code-example header="app.module.ts">
+
+```ts
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { DefaultDataServiceConfig, EntityDataModule } from '@ngrx/data';
+import {
+  DefaultDataServiceConfig,
+  EntityDataModule,
+} from '@ngrx/data';
 import { entityConfig } from './entity-metadata';
 
 @NgModule({
-imports: [
-HttpClientModule,
-StoreModule.forRoot({}),
-EffectsModule.forRoot([]),
-EntityDataModule.forRoot(entityConfig)
-]
+  imports: [
+    HttpClientModule,
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
+    EntityDataModule.forRoot(entityConfig),
+  ],
 })
 export class AppModule {}
+```
+
 </ngrx-code-example>
 
 ### Using the Standalone API
@@ -115,6 +126,8 @@ export class AppModule {}
 Registering the root entity data can also be done using the standalone APIs if you are bootstrapping an Angular application using standalone features.
 
 <ngrx-code-example header="main.ts">
+
+```ts
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
@@ -125,13 +138,15 @@ import { AppComponent } from './app.component';
 import { entityConfig } from './entity-metadata';
 
 bootstrapApplication(AppComponent, {
-providers: [
-provideHttpClient(),
-provideStore(),
-provideEffects(),
-provideEntityData(entityConfig, withEffects())
-],
+  providers: [
+    provideHttpClient(),
+    provideStore(),
+    provideEffects(),
+    provideEntityData(entityConfig, withEffects()),
+  ],
 });
+```
+
 </ngrx-code-example>
 
 ## Creating entity data services
@@ -139,19 +154,25 @@ provideEntityData(entityConfig, withEffects())
 NgRx Data handles creating, retrieving, updating, and deleting data on your server by extending `EntityCollectionServiceBase` in your service class.
 
 <ngrx-code-example header="hero.service.ts">
+
+```ts
 import { Injectable } from '@angular/core';
 import {
   EntityCollectionServiceBase,
-  EntityCollectionServiceElementsFactory
+  EntityCollectionServiceElementsFactory,
 } from '@ngrx/data';
 import { Hero } from '../core';
 
 @Injectable({ providedIn: 'root' })
 export class HeroService extends EntityCollectionServiceBase<Hero> {
-constructor(serviceElementsFactory: EntityCollectionServiceElementsFactory) {
-super('Hero', serviceElementsFactory);
+  constructor(
+    serviceElementsFactory: EntityCollectionServiceElementsFactory
+  ) {
+    super('Hero', serviceElementsFactory);
+  }
 }
-}
+```
+
 </ngrx-code-example>
 
 ## Using NgRx Data in components
@@ -159,45 +180,49 @@ super('Hero', serviceElementsFactory);
 To access the entity data, components should inject entity data services.
 
 <ngrx-code-example header="heroes.component.ts">
+
+```ts
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Hero } from '../../core';
 import { HeroService } from '../hero.service';
 
 @Component({
-selector: 'app-heroes',
-templateUrl: './heroes.component.html',
-styleUrls: ['./heroes.component.scss']
+  selector: 'app-heroes',
+  templateUrl: './heroes.component.html',
+  styleUrls: ['./heroes.component.scss'],
 })
 export class HeroesComponent implements OnInit {
-loading$: Observable<boolean>;
+  loading$: Observable<boolean>;
   heroes$: Observable<Hero[]>;
 
-constructor(private heroService: HeroService) {
-this.heroes$ = heroService.entities$;
+  constructor(private heroService: HeroService) {
+    this.heroes$ = heroService.entities$;
     this.loading$ = heroService.loading$;
-}
+  }
 
-ngOnInit() {
-this.getHeroes();
-}
+  ngOnInit() {
+    this.getHeroes();
+  }
 
-add(hero: Hero) {
-this.heroService.add(hero);
-}
+  add(hero: Hero) {
+    this.heroService.add(hero);
+  }
 
-delete(hero: Hero) {
-this.heroService.delete(hero.id);
-}
+  delete(hero: Hero) {
+    this.heroService.delete(hero.id);
+  }
 
-getHeroes() {
-this.heroService.getAll();
-}
+  getHeroes() {
+    this.heroService.getAll();
+  }
 
-update(hero: Hero) {
-this.heroService.update(hero);
+  update(hero: Hero) {
+    this.heroService.update(hero);
+  }
 }
-}
+```
+
 </ngrx-code-example>
 
 In this example, you need to listen for the stream of heroes. The `heroes$` property references the `heroService.entities$` Observable. When state is changed as a result of a successful HTTP request (initiated by `getAll()`, for example), the `heroes$` property will emit the latest Hero array.

@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # Entity Actions
 
@@ -22,26 +22,35 @@ An `EntityAction` is a super-set of the _NgRx `Action`_.
 It has additional properties that guide NgRx Data's handling of the action. Here's the full interface.
 
 <ngrx-code-example header="EntityAction" linenums="false">
+
+```ts
 export interface EntityAction<P = any> extends Action {
   readonly type: string;
   readonly payload: EntityActionPayload<P>;
 }
+```
+
 </ngrx-code-example>
 
 <ngrx-code-example header="EntityActionPayload" linenums="false">
-export interface EntityActionPayload<P = any> extends EntityActionOptions {
+
+```ts
+export interface EntityActionPayload<P = any>
+  extends EntityActionOptions {
   readonly entityName: string;
   readonly entityOp: EntityOp;
   readonly data?: P;
 
-// EntityActionOptions (also an interface)
-readonly correlationId?: any;
-readonly isOptimistic?: boolean;
-readonly mergeStrategy?: MergeStrategy;
-readonly tag?: string;
-error?: Error;
-skip?: boolean
+  // EntityActionOptions (also an interface)
+  readonly correlationId?: any;
+  readonly isOptimistic?: boolean;
+  readonly mergeStrategy?: MergeStrategy;
+  readonly tag?: string;
+  error?: Error;
+  skip?: boolean;
 }
+```
+
 </ngrx-code-example>
 
 - `type` - action name, typically generated from the `tag` and the `entityOp`.
@@ -110,7 +119,7 @@ whose `type` is a string composed from the `tag` (the `entityName` by default) a
 
 For example, the default generated `Action.type` for the operation that queries the server for all heroes is `'[Hero] NgRx Data/query-all'`.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The `EntityActionFactory.create()` method calls the factory's `formatActionType()` method
 to produce the `Action.type` string.
@@ -118,7 +127,7 @@ to produce the `Action.type` string.
 Because NgRx Data ignores the `type`, you can replace `formatActionType()` with your own method if you prefer a different format
 or provide and inject your own `EntityActionFactory`.
 
-</div>
+</ngrx-docs-alert>
 
 Note that **_each entity type has its own \_unique_ `Action` for each operation\_**, as if you had created them individually by hand.
 
@@ -142,7 +151,10 @@ e.g., `'[Hero] NgRx Data/query-all'`.
 Here's an example that uses the injectable `EntityActionFactory` to construct the default "query all heroes" action.
 
 ```typescript
-const action = this.entityActionFactory.create<Hero>('Hero', EntityOp.QUERY_ALL);
+const action = this.entityActionFactory.create<Hero>(
+  'Hero',
+  EntityOp.QUERY_ALL
+);
 
 store.dispatch(action);
 ```
@@ -165,7 +177,12 @@ where that action is dispatched by your code.
 For example,
 
 ```typescript
-const action = this.entityActionFactory.create<Hero>('Hero', EntityOp.QUERY_ALL, null, { tag: 'Load Heroes On Start' });
+const action = this.entityActionFactory.create<Hero>(
+  'Hero',
+  EntityOp.QUERY_ALL,
+  null,
+  { tag: 'Load Heroes On Start' }
+);
 
 store.dispatch(action);
 ```
@@ -225,11 +242,11 @@ It takes many _actions_, a complex _reducer_, and the help of an NgRx [Effect](g
 
 The NgRx [Entity](guide/entity) library makes the job considerably easier.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The NgRx Data library internally delegates much of the heavy lifting to NgRx _Entity_.
 
-</div>
+</ngrx-docs-alert>
 
 But you must still write a lot of code for each entity type.
 You're expected to create _eight actions_ per entity type and
@@ -263,11 +280,11 @@ NgRx Data traps an error thrown by an `EntityCollectionReducer` and sets the `En
 The `error` property is important when the errant action is a _persistence action_ (such as `SAVE_ADD_ONE`).
 The `EntityEffects` will see that such an action has an error and will return the corresponding failure action (`SAVE_ADD_ONE_ERROR`) immediately, without attempting an HTTP request.
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
 This is the only way we've found to prevent a bad action from getting through the effect and triggering an HTTP request.
 
-</div>
+</ngrx-docs-alert>
 
 <a id="action-skip"></a>
 

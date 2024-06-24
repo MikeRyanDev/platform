@@ -11,26 +11,30 @@ Actions are used in many areas of NgRx. Actions are the inputs and outputs of ma
 An `Action` in NgRx is made up of a simple interface:
 
 <ngrx-code-example header="Action Interface">
+
+```ts
 interface Action {
   type: string;
 }
+```
+
 </ngrx-code-example>
 
 The interface has a single property, the `type`, represented as a string. The `type` property is for describing the action that will be dispatched in your application. The value of the type comes in the form of `[Source] Event` and is used to provide a context of what category of action it is, and where an action was dispatched from. You add properties to an action to provide additional context or metadata for an action.
 
 Listed below are examples of actions written as plain old JavaScript objects (POJOs):
 
-```json
+```ts
 {
-  "type": "[Auth API] Login Success"
+  type: '[Auth API] Login Success';
 }
 ```
 
 This action describes an event triggered by a successful authentication after interacting with a backend API.
 
-```json
+```ts
 {
-  type: '[Login Page] Login',
+  type: "[Login Page] Login",
   username: string;
   password: string;
 }
@@ -53,12 +57,16 @@ Following these guidelines helps you follow how these actions flow throughout yo
 Let's look at an example action of initiating a login request.
 
 <ngrx-code-example header="login-page.actions.ts">
+
+```ts
 import { createAction, props } from '@ngrx/store';
 
 export const login = createAction(
-'[Login Page] Login',
-props<{ username: string; password: string }>()
+  '[Login Page] Login',
+  props<{ username: string; password: string }>()
 );
+```
+
 </ngrx-code-example>
 
 The `createAction` function returns a function, that when called returns an object in the shape of the `Action` interface. The `props` method is used to define any additional metadata needed for the handling of the action. Action creators provide a consistent, type-safe way to construct an action that is being dispatched.
@@ -66,9 +74,13 @@ The `createAction` function returns a function, that when called returns an obje
 Use the action creator to return the `Action` when dispatching.
 
 <ngrx-code-example header="login-page.component.ts">
+
+```ts
   onSubmit(username: string, password: string) {
     store.dispatch(login({ username: username, password: password }));
   }
+```
+
 </ngrx-code-example>
 
 The `login` action creator receives an object of `username` and `password` and returns a plain JavaScript object with a `type` property of `[Login Page] Login`, with `username` and `password` as additional properties.
@@ -79,15 +91,8 @@ The returned action has very specific context about where the action came from a
 - The category is used to group actions for a particular area, whether it be a component page, backend API, or browser API.
 - The `Login` text after the category is a description about what event occurred from this action. In this case, the user clicked a login button from the login page to attempt to authenticate with a username and password.
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
-**Note:** You can also write actions using class-based action creators, which was the previously defined way before action creators were introduced in NgRx. If you are looking for examples of class-based action creators, visit the documentation for [versions 7.x and prior](https://v7.ngrx.io/guide/store/actions).
+You can also write actions using class-based action creators, which was the previously defined way before action creators were introduced in NgRx. If you are looking for examples of class-based action creators, visit the documentation for [versions 7.x and prior](https://v7.ngrx.io/guide/store/actions).
 
-</div>
-
-## Next Steps
-
-Action's only responsibilities are to express unique events and intents. Learn how they are handled in the guides below.
-
-- [Reducers](guide/store/reducers)
-- [Effects](guide/effects)
+</ngrx-docs-alert>

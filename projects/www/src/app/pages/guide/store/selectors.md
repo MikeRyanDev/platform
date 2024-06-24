@@ -13,22 +13,26 @@ When using the `createSelector` and `createFeatureSelector` functions @ngrx/stor
 ### Using a selector for one piece of state
 
 <ngrx-code-example header="index.ts">
+
+```ts
 import { createSelector } from '@ngrx/store';
 
 export interface FeatureState {
-counter: number;
+  counter: number;
 }
 
 export interface AppState {
-feature: FeatureState;
+  feature: FeatureState;
 }
 
 export const selectFeature = (state: AppState) => state.feature;
 
 export const selectFeatureCount = createSelector(
-selectFeature,
-(state: FeatureState) => state.counter
+  selectFeature,
+  (state: FeatureState) => state.counter
 );
+```
+
 </ngrx-code-example>
 
 ### Using selectors for multiple pieces of state
@@ -46,38 +50,44 @@ You can use `createSelector` to achieve just that. Your visible books will alway
 The result will be just some of your state filtered by another section of the state. And it will be always up to date.
 
 <ngrx-code-example header="index.ts">
+
+```ts
 import { createSelector } from '@ngrx/store';
 
 export interface User {
-id: number;
-name: string;
+  id: number;
+  name: string;
 }
 
 export interface Book {
-id: number;
-userId: number;
-name: string;
+  id: number;
+  userId: number;
+  name: string;
 }
 
 export interface AppState {
-selectedUser: User;
-allBooks: Book[];
+  selectedUser: User;
+  allBooks: Book[];
 }
 
 export const selectUser = (state: AppState) => state.selectedUser;
 export const selectAllBooks = (state: AppState) => state.allBooks;
 
 export const selectVisibleBooks = createSelector(
-selectUser,
-selectAllBooks,
-(selectedUser: User, allBooks: Book[]) => {
-if (selectedUser && allBooks) {
-return allBooks.filter((book: Book) => book.userId === selectedUser.id);
-} else {
-return allBooks;
-}
-}
+  selectUser,
+  selectAllBooks,
+  (selectedUser: User, allBooks: Book[]) => {
+    if (selectedUser && allBooks) {
+      return allBooks.filter(
+        (book: Book) => book.userId === selectedUser.id
+      );
+    } else {
+      return allBooks;
+    }
+  }
 );
+```
+
 </ngrx-code-example>
 
 The `createSelector` function also provides the ability to pass a dictionary of selectors without a projector.
@@ -93,11 +103,11 @@ const selectBooksPageViewModel = createSelector({
 
 ### Using selectors with props
 
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 Selectors with props are [deprecated](https://github.com/ngrx/platform/issues/2980).
 
-</div>
+</ngrx-docs-alert>
 
 To select a piece of state based on data that isn't available in the store you can pass `props` to the selector function. These `props` gets passed through every selector and the projector function.
 To do so we must specify these `props` when we use the selector inside our component.
@@ -107,18 +117,26 @@ For example if we have a counter and we want to multiply its value, we can add t
 The last argument of a selector or a projector is the `props` argument, for our example it looks as follows:
 
 <ngrx-code-example header="index.ts">
+
+```ts
 export const selectCount = createSelector(
   selectCounterValue,
   (counter, props) => counter * props.multiply
 );
+```
+
 </ngrx-code-example>
 
 Inside the component we can define the `props`:
 
 <ngrx-code-example header="app.component.ts">
+
+```ts
 ngOnInit() {
   this.counter = this.store.select(fromRoot.selectCount, { multiply: 2 })
 }
+```
+
 </ngrx-code-example>
 
 Keep in mind that a selector only keeps the previous input arguments in its cache. If you reuse this selector with another multiply factor, the selector would always have to re-evaluate its value. This is because it's receiving both of the multiply factors (e.g. one time `2`, the other time `4`). In order to correctly memoize the selector, wrap the selector inside a factory function to create different instances of the selector.
@@ -126,21 +144,29 @@ Keep in mind that a selector only keeps the previous input arguments in its cach
 The following is an example of using multiple counters differentiated by `id`.
 
 <ngrx-code-example header="index.ts">
+
+```ts
 export const selectCount = () =>
   createSelector(
     (state, props) => state.counter[props.id],
     (counter, props) => counter * props.multiply
   );
+```
+
 </ngrx-code-example>
 
 The component's selectors are now calling the factory function to create different selector instances:
 
 <ngrx-code-example header="app.component.ts">
+
+```ts
 ngOnInit() {
   this.counter2 = this.store.select(fromRoot.selectCount(), { id: 'counter2', multiply: 2 });
   this.counter4 = this.store.select(fromRoot.selectCount(), { id: 'counter4', multiply: 4 });
   this.counter6 = this.store.select(fromRoot.selectCount(), { id: 'counter6', multiply: 6 });
 }
+```
+
 </ngrx-code-example>
 
 ## Selecting Feature States
@@ -148,46 +174,53 @@ ngOnInit() {
 The `createFeatureSelector` is a convenience method for returning a top level feature state. It returns a typed selector function for a feature slice of state.
 
 <ngrx-code-example header="index.ts">
+
+```ts
 import { createSelector, createFeatureSelector } from '@ngrx/store';
 
 export const featureKey = 'feature';
 
 export interface FeatureState {
-counter: number;
+  counter: number;
 }
 
-export const selectFeature = createFeatureSelector<FeatureState>(featureKey);
+export const selectFeature =
+  createFeatureSelector<FeatureState>(featureKey);
 
 export const selectFeatureCount = createSelector(
-selectFeature,
-(state: FeatureState) => state.counter
+  selectFeature,
+  (state: FeatureState) => state.counter
 );
+```
+
 </ngrx-code-example>
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
 Using a [Feature Creator](guide/store/feature-creators) generates the top-level selector and child selectors for each feature state property.
 
-</div>
+</ngrx-docs-alert>
 
 ## Resetting Memoized Selectors
 
 The selector function returned by calling `createSelector` or `createFeatureSelector` initially has a memoized value of `null`. After a selector is invoked the first time its memoized value is stored in memory. If the selector is subsequently invoked with the same arguments it will return the memoized value. If the selector is then invoked with different arguments it will recompute and update its memoized value. Consider the following:
 
 <ngrx-code-example header="example.ts">
+
+```ts
 import { createSelector } from '@ngrx/store';
 
 export interface State {
-counter1: number;
-counter2: number;
+  counter1: number;
+  counter2: number;
 }
 
 export const selectCounter1 = (state: State) => state.counter1;
 export const selectCounter2 = (state: State) => state.counter2;
 export const selectTotal = createSelector(
-selectCounter1,
-selectCounter2,
-(counter1, counter2) => counter1 + counter2
+  selectCounter1,
+  selectCounter2,
+  (counter1, counter2) => counter1 + counter2
 ); // selectTotal has a memoized value of null, because it has not yet been invoked.
 
 let state = { counter1: 3, counter2: 4 };
@@ -198,59 +231,69 @@ selectTotal(state); // does not compute the sum of 3 & 4. selectTotal instead re
 state = { ...state, counter2: 5 };
 
 selectTotal(state); // computes the sum of 3 & 5, returning 8. selectTotal now has a memoized value of 8
+```
+
 </ngrx-code-example>
 
 A selector's memoized value stays in memory indefinitely. If the memoized value is, for example, a large dataset that is no longer needed it's possible to reset the memoized value to null so that the large dataset can be removed from memory. This can be accomplished by invoking the `release` method on the selector.
 
 <ngrx-code-example header="example.ts">
+
+```ts
 selectTotal(state); // returns the memoized value of 8
 selectTotal.release(); // memoized value of selectTotal is now null
+```
+
 </ngrx-code-example>
 
 Releasing a selector also recursively releases any ancestor selectors. Consider the following:
 
 <ngrx-code-example header="index.ts">
+
+```ts
 export interface State {
   evenNums: number[];
   oddNums: number[];
 }
 
 export const selectSumEvenNums = createSelector(
-(state: State) => state.evenNums,
-evenNums => evenNums.reduce((prev, curr) => prev + curr)
+  (state: State) => state.evenNums,
+  (evenNums) => evenNums.reduce((prev, curr) => prev + curr)
 );
 export const selectSumOddNums = createSelector(
-(state: State) => state.oddNums,
-oddNums => oddNums.reduce((prev, curr) => prev + curr)
+  (state: State) => state.oddNums,
+  (oddNums) => oddNums.reduce((prev, curr) => prev + curr)
 );
 export const selectTotal = createSelector(
-selectSumEvenNums,
-selectSumOddNums,
-(evenSum, oddSum) => evenSum + oddSum
+  selectSumEvenNums,
+  selectSumOddNums,
+  (evenSum, oddSum) => evenSum + oddSum
 );
 
 selectTotal({
-evenNums: [2, 4],
-oddNums: [1, 3],
+  evenNums: [2, 4],
+  oddNums: [1, 3],
 });
 
-/\*\*
+/**
 
 - Memoized Values before calling selectTotal.release()
 - selectSumEvenNums 6
 - selectSumOddNums 4
 - selectTotal 10
-  \*/
+  */
 
 selectTotal.release();
 
-/\*\*
+/**
 
 - Memoized Values after calling selectTotal.release()
 - selectSumEvenNums null
 - selectSumOddNums null
 - selectTotal null
-  \*/
+  */
+```
+
   </ngrx-code-example>
 
 ## Using Store Without Type Generic
@@ -259,18 +302,24 @@ The most common way to select information from the store is to use a selector fu
 
 So, when injecting `Store` into components and other injectables, the generic type can be omitted. If injected without the generic, the default generic applied is `Store<T = object>`.
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
+
 It is important to continue to provide a Store type generic if you are using the string version of selectors as types cannot be inferred automatically in those instances.
-</div>
+
+</ngrx-docs-alert>
 
 The follow example demonstrates the use of `Store` without providing a generic:
 
 <ngrx-code-example header="app.component.ts">
+
+```ts
 export class AppComponent {
   counter$ = this.store.select(fromCounter.selectCounter);
 
-constructor(private readonly store: Store) {}
+  constructor(private readonly store: Store) {}
 }
+```
+
 </ngrx-code-example>
 
 When using strict mode, the `select` method will expect to be passed a selector whose base selects from an `object`.
@@ -278,22 +327,27 @@ When using strict mode, the `select` method will expect to be passed a selector 
 This is the default behavior of `createFeatureSelector` when providing only one generic argument:
 
 <ngrx-code-example header="index.ts">
+
+```ts
 import { createSelector, createFeatureSelector } from '@ngrx/store';
 
 export const featureKey = 'feature';
 
 export interface FeatureState {
-counter: number;
+  counter: number;
 }
 
 // selectFeature will have the type MemoizedSelector<object, FeatureState>
-export const selectFeature = createFeatureSelector<FeatureState>(featureKey);
+export const selectFeature =
+  createFeatureSelector<FeatureState>(featureKey);
 
 // selectFeatureCount will have the type MemoizedSelector<object, number>
 export const selectFeatureCount = createSelector(
-selectFeature,
-state => state.counter
+  selectFeature,
+  (state) => state.counter
 );
+```
+
 </ngrx-code-example>
 
 ## Using Signal Selector
@@ -302,7 +356,7 @@ The `selectSignal` method expects a selector as an input argument and returns a 
 
 ### Example Usage in Components
 
-```typescript
+```ts
 import { Component, inject } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { Store } from '@ngrx/store';
@@ -350,28 +404,36 @@ Let's pretend we have a selector called `selectValues` and the component for dis
 We can achieve this behaviour by using only RxJS pipeable operators:
 
 <ngrx-code-example header="app.component.ts">
+
+```ts
 import { map, filter } from 'rxjs/operators';
 
 store
-.pipe(
-map(state => selectValues(state)),
-filter(val => val !== undefined)
-)
-.subscribe(/_ .. _/);
+  .pipe(
+    map((state) => selectValues(state)),
+    filter((val) => val !== undefined)
+  )
+  .subscribe(/* ... */);
+```
+
 </ngrx-code-example>
 
 The above can be further rewritten to use the `select()` utility function from NgRx:
 
 <ngrx-code-example header="app.component.ts">
+
+```ts
 import { select } from '@ngrx/store';
 import { map, filter } from 'rxjs/operators';
 
 store
-.pipe(
-select(selectValues),
-filter(val => val !== undefined)
-)
-.subscribe(/_ .. _/);
+  .pipe(
+    select(selectValues),
+    filter((val) => val !== undefined)
+  )
+  .subscribe(/* ... */);
+```
+
 </ngrx-code-example>
 
 #### Solution: Extracting a pipeable operator
@@ -379,16 +441,20 @@ filter(val => val !== undefined)
 To make the `select()` and `filter()` behaviour a reusable piece of code, we extract a [pipeable operator](https://github.com/ReactiveX/rxjs/blob/master/doc/pipeable-operators.md) using the RxJS `pipe()` utility function:
 
 <ngrx-code-example header="app.component.ts">
+
+```ts
 import { select } from '@ngrx/store';
 import { pipe } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 export const selectFilteredValues = pipe(
-select(selectValues),
-filter(val => val !== undefined)
+  select(selectValues),
+  filter((val) => val !== undefined)
 );
 
-store.pipe(selectFilteredValues).subscribe(/_ .. _/);
+store.pipe(selectFilteredValues).subscribe(/* ... */);
+```
+
 </ngrx-code-example>
 
 ### Advanced Example: Select the last {n} state transitions
@@ -400,6 +466,8 @@ The projected state will emit a value when both slices of state have a value.
 Otherwise, the selector will emit an `undefined` value.
 
 <ngrx-code-example header="index.ts">
+
+```ts
 export const selectProjectedValues = createSelector(
   selectFoo,
   selectBar,
@@ -409,9 +477,10 @@ export const selectProjectedValues = createSelector(
     }
 
     return undefined;
-
-}
+  }
 );
+```
+
 </ngrx-code-example>
 
 Then, the component should visualize the history of state transitions.
@@ -419,24 +488,32 @@ We are not only interested in the current state but rather like to display the l
 Meaning that we will map a stream of state values (`1`, `2`, `3`) to an array of state values (`[1, 2, 3]`).
 
 <ngrx-code-example header="select-last-state-transition.ts">
+
+```ts
 // The number of state transitions is given by the user (subscriber)
 export const selectLastStateTransitions = (count: number) => {
+  return pipe(
+    // Thanks to `createSelector` the operator will have memoization "for free"
+    select(selectProjectedValues), // Combines the last `count` state values in array
+    scan((acc, curr) => {
+      return [curr, ...acc].filter(
+        (val, index) => index < count && val !== undefined
+      );
+    }, [] as { foo: number; bar: string }[]) // XX: Explicit type hint for the array.
+    // Equivalent to what is emitted by the selector
+  );
+};
+```
 
-return pipe(
-   // Thanks to `createSelector` the operator will have memoization "for free"
-   select(selectProjectedValues),
-   // Combines the last `count` state values in array
-   scan((acc, curr) => {
-return [ curr, ...acc ].filter((val, index) => index < count && val !== undefined)
-}, [] as {foo: number; bar: string}[]) // XX: Explicit type hint for the array.
-// Equivalent to what is emitted by the selector
-);
-}
 </ngrx-code-example>
 
 Finally, the component will subscribe to the store, telling the number of state transitions it wishes to display:
 
 <ngrx-code-example header="app.component.ts">
+
+```ts
 // Subscribe to the store using the custom pipeable operator
 store.pipe(selectLastStateTransitions(3)).subscribe(/* .. */);
+```
+
 </ngrx-code-example>

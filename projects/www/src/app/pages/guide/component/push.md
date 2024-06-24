@@ -58,7 +58,9 @@ The `ngrxPush` pipe can be also used with a dictionary of observables in the
 following way:
 
 ```html
-<code> {{ { users: users$, query: query$ } | ngrxPush | json }} </code>
+<code>
+  {{ { users: users$, query: query$ } | ngrxPush | json }}
+</code>
 ```
 
 ## Included Features

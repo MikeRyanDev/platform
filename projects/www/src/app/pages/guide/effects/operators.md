@@ -16,37 +16,40 @@ The `ofType` operator takes up to 5 arguments with proper type inference. It can
 take even more, however the type would be inferred as an `Action` interface.
 
 <ngrx-code-example header="auth.effects.ts">
+
+```ts
 import { Injectable } from '@angular/core';
 import { Actions, ofType, createEffect } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, exhaustMap, map } from 'rxjs/operators';
-import {
-  LoginPageActions,
-  AuthApiActions,
-} from '../actions';
+import { LoginPageActions, AuthApiActions } from '../actions';
 import { Credentials } from '../models/user';
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class AuthEffects {
-login$ = createEffect(() =>
-this.actions$.pipe(
-// Filters by Action Creator 'login'
-ofType(LoginPageActions.login),
-exhaustMap(action =>
-this.authService.login(action.credentials).pipe(
-map(user => AuthApiActions.loginSuccess({ user })),
-catchError(error => of(AuthApiActions.loginFailure({ error })))
-)
-)
-)
-);
+  login$ = createEffect(() =>
+    this.actions$.pipe(
+      // Filters by Action Creator 'login'
+      ofType(LoginPageActions.login),
+      exhaustMap((action) =>
+        this.authService.login(action.credentials).pipe(
+          map((user) => AuthApiActions.loginSuccess({ user })),
+          catchError((error) =>
+            of(AuthApiActions.loginFailure({ error }))
+          )
+        )
+      )
+    )
+  );
 
-constructor(
-private actions$: Actions,
-private authService: AuthService
-) {}
+  constructor(
+    private actions$: Actions,
+    private authService: AuthService
+  ) {}
 }
+```
+
 </ngrx-code-example>
 
 ## `concatLatestFrom`
@@ -64,35 +67,47 @@ selector from being evaluated until the source emits a value.
 The `concatLatestFrom` operator takes an Observable factory function that returns an array of Observables, or a single Observable.
 
 <ngrx-code-example header="router.effects.ts">
+
+```ts
 import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 import { map, tap } from 'rxjs/operators';
 
-import {Actions, concatLatestFrom, createEffect, ofType} from '@ngrx/effects';
+import {
+  Actions,
+  concatLatestFrom,
+  createEffect,
+  ofType,
+} from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { routerNavigatedAction } from '@ngrx/router-store';
 
-import \* as fromRoot from '@example-app/reducers';
+import * as fromRoot from '@example-app/reducers';
 
 @Injectable()
 export class RouterEffects {
-updateTitle$ = createEffect(() =>
-this.actions$.pipe(
-ofType(routerNavigatedAction),
-concatLatestFrom(() => this.store.select(fromRoot.selectRouteData)),
-map(([, data]) => `Book Collection - ${data['title']}`),
-tap((title) => this.titleService.setTitle(title))
-),
-{
-dispatch: false,
-}
-);
+  updateTitle$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(routerNavigatedAction),
+        concatLatestFrom(() =>
+          this.store.select(fromRoot.selectRouteData)
+        ),
+        map(([, data]) => `Book Collection - ${data['title']}`),
+        tap((title) => this.titleService.setTitle(title))
+      ),
+    {
+      dispatch: false,
+    }
+  );
 
-constructor(
-private actions$: Actions,
-private store: Store<fromRoot.State>,
-private titleService: Title
-) {}
+  constructor(
+    private actions$: Actions,
+    private store: Store<fromRoot.State>,
+    private titleService: Title
+  ) {}
 }
+```
+
 </ngrx-code-example>

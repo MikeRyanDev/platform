@@ -36,11 +36,11 @@ export const ProductsPageActions = createActionGroup({
 
 </ngrx-code-example>
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The `emptyProps` function is used to define an action creator without payload within an action group.
 
-</div>
+</ngrx-docs-alert>
 
 If we create a new action creator using the `createAction` function by copying the previous one but accidentally forget to change its type, the compilation will pass.
 Fortunately, this is not the case with the @ngrx/store!createActionGroup:function function because we will get a compilation error if two actions from the same group have the same type.
@@ -56,26 +56,28 @@ import { Store } from '@ngrx/store';
 
 import { ProductsPageActions } from './products-page.actions';
 
-@Component({ /_ ... _/ })
+@Component({
+  /* ... */
+})
 export class ProductsComponent implements OnInit {
-private readonly store = inject(Store);
+  private readonly store = inject(Store);
 
-ngOnInit(): void {
-// action type: [Products Page] Opened
-this.store.dispatch(ProductsPageActions.opened());
-}
+  ngOnInit(): void {
+    // action type: [Products Page] Opened
+    this.store.dispatch(ProductsPageActions.opened());
+  }
 
-onPaginationChange(page: number, offset: number): void {
-// action type: [Products Page] Pagination Changed
-this.store.dispatch(
-ProductsPageActions.paginationChanged({ page, offset })
-);
-}
+  onPaginationChange(page: number, offset: number): void {
+    // action type: [Products Page] Pagination Changed
+    this.store.dispatch(
+      ProductsPageActions.paginationChanged({ page, offset })
+    );
+  }
 
-onQueryChange(query: string): void {
-// action type: [Products Page] Query Changed
-this.store.dispatch(ProductsPageActions.queryChanged(query));
-}
+  onQueryChange(query: string): void {
+    // action type: [Products Page] Query Changed
+    this.store.dispatch(ProductsPageActions.queryChanged(query));
+  }
 }
 ```
 

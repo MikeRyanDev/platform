@@ -73,7 +73,11 @@ export class Component extends ComponentStore<StoreState> {
 export class Component extends ComponentStore<MoviesState> {
   movies$ = this.select((state) => state.movies);
   selectedId$ = this.select((state) => state.selectedId);
-  movie$ = this.select(this.movies$, this.selectedId$, ([movies, selectedId]) => movies[selectedId]);
+  movie$ = this.select(
+    this.movies$,
+    this.selectedId$,
+    ([movies, selectedId]) => movies[selectedId]
+  );
 
   constructor() {
     super({ movies: [] });

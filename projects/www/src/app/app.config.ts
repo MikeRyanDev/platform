@@ -2,7 +2,11 @@ import { ApplicationConfig } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideFileRouter, routes } from '@analogjs/router';
-import { withComponentInputBinding } from '@angular/router';
+import {
+  withComponentInputBinding,
+  withInMemoryScrolling,
+  withViewTransitions,
+} from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   provideContent,
@@ -13,7 +17,11 @@ import { NgRxMarkedSetupService } from './services/markdown.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideFileRouter(withComponentInputBinding()),
+    provideFileRouter(
+      withComponentInputBinding(),
+      withViewTransitions(),
+      withInMemoryScrolling()
+    ),
     provideClientHydration(),
     provideHttpClient(withFetch()),
     provideAnimations(),

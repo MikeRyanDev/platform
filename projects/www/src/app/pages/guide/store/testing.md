@@ -5,15 +5,17 @@
 The `provideMockStore()` function registers providers that allow you to mock out the `Store` for testing functionality that has a dependency on `Store` without setting up reducers.
 You can write tests validating behaviors corresponding to the specific state snapshot easily.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 **Note:** All dispatched actions don't affect the state, but you can see them in the `scannedActions$` stream.
 
-</div>
+</ngrx-docs-alert>
 
 Usage:
 
 <ngrx-code-example header="auth.guard.spec.ts">
+
+```ts
 import { TestBed } from '@angular/core/testing';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
@@ -21,43 +23,42 @@ import { cold } from 'jasmine-marbles';
 import { AuthGuard } from '../guards/auth.guard';
 
 describe('Auth Guard', () => {
-let guard: AuthGuard;
-let store: MockStore;
-const initialState = { loggedIn: false };
+  let guard: AuthGuard;
+  let store: MockStore;
+  const initialState = { loggedIn: false };
 
-beforeEach(() => {
-TestBed.configureTestingModule({
-imports: [
-// any modules needed
-],
-providers: [
-AuthGuard,
-provideMockStore({ initialState }),
-// other providers
-],
-});
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        // any modules needed
+      ],
+      providers: [
+        AuthGuard,
+        provideMockStore({ initialState }),
+        // other providers
+      ],
+    });
 
     store = TestBed.inject(MockStore);
     guard = TestBed.inject(AuthGuard);
+  });
 
-});
-
-it('should return false if the user state is not logged in', () => {
-const expected = cold('(a|)', { a: false });
+  it('should return false if the user state is not logged in', () => {
+    const expected = cold('(a|)', { a: false });
 
     expect(guard.canActivate()).toBeObservable(expected);
+  });
 
-});
-
-it('should return true if the user state is logged in', () => {
-store.setState({ loggedIn: true });
+  it('should return true if the user state is logged in', () => {
+    store.setState({ loggedIn: true });
 
     const expected = cold('(a|)', { a: true });
 
     expect(guard.canActivate()).toBeObservable(expected);
+  });
+});
+```
 
-});
-});
 </ngrx-code-example>
 
 ### Using Mock Selectors
@@ -112,37 +113,42 @@ The following example tests the `booksReducer` from the [walkthrough](guide/stor
 The `provideMockStore()` function can be also used with `Injector.create`:
 
 <ngrx-code-example header="books.component.spec.ts">
+
+```ts
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Injector } from '@angular/core';
 
 describe('Books Component', () => {
-let store: MockStore;
-const initialState = { books: ['Book 1', 'Book 2', 'Book 3'] };
+  let store: MockStore;
+  const initialState = { books: ['Book 1', 'Book 2', 'Book 3'] };
 
-beforeEach(() => {
-const injector = Injector.create({
-providers: [
-provideMockStore({ initialState }),
-],
-});
+  beforeEach(() => {
+    const injector = Injector.create({
+      providers: [provideMockStore({ initialState })],
+    });
 
     store = injector.get(MockStore);
+  });
+});
+```
 
-});
-});
 </ngrx-code-example>
 
 Another option to create the `MockStore` without `TestBed` is by calling the `createMockStore()` function:
 
 <ngrx-code-example header="books.component.spec.ts">
+
+```ts
 import { MockStore, createMockStore } from '@ngrx/store/testing';
 
 describe('Books Component', () => {
-let store: MockStore;
-const initialState = { books: ['Book 1', 'Book 2', 'Book 3'] };
+  let store: MockStore;
+  const initialState = { books: ['Book 1', 'Book 2', 'Book 3'] };
 
-beforeEach(() => {  
- store = createMockStore({ initialState });
+  beforeEach(() => {
+    store = createMockStore({ initialState });
+  });
 });
-});
+```
+
 </ngrx-code-example>

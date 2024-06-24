@@ -16,16 +16,13 @@ export type AlertType = 'inform' | 'warn' | 'error' | 'help';
     `
       :host {
         display: block;
-        padding: 4px 16px 16px;
+        padding: 0px 16px 16px;
+        margin: 14px 0;
         border-left: 8px solid;
         border-top: 1px solid;
         border-bottom: 1px solid;
         border-right: 1px solid;
         border-color: rgba(255, 255, 255, 0.12);
-      }
-
-      p + :host {
-        margin-top: 14px;
       }
 
       :host p {
@@ -50,6 +47,10 @@ export type AlertType = 'inform' | 'warn' | 'error' | 'help';
       :host(.help) {
         border-color: rgba(1, 89, 66, 1);
         background-color: rgba(1, 89, 66, 0.12);
+      }
+
+      :host + h2 {
+        margin-top: 0;
       }
     `,
   ],

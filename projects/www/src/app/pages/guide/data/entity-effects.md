@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # Entity Effects
 
@@ -33,7 +33,7 @@ The `EntityCache.cancel$` watches for this action and is piped into
 the `EntityCache.persist$`, where it can try to cancel an entity collection query or save operation
 or at least prevent the server response from updating the cache.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 It's not obvious that this is ever a great idea for a save operation.
 You cannot tell the server to cancel this way and cannot know if the server did or did not save.
@@ -46,6 +46,6 @@ The effect will issue a `CANCELED_PERSIST` action instead.
 The `EntityCollection` reducer ignores this action but you can listen for it among the store actions
 and thus know that the cancellation took effect on the client.
 
-</div>
+</ngrx-docs-alert>
 
 **_More to come on the subject of effects_**

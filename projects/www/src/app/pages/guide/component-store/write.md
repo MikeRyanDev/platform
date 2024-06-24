@@ -13,30 +13,35 @@ and should return the new state, updated immutably.
 
 There could be many updaters within a ComponentStore. They are analogous to "CASE" statements or `on()` functions in `@ngrx/store` reducer.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 Using the `updater` method allows developers to extract business logic out of components into services,
 which makes components easier to read and test.
 
-</div>
+</ngrx-docs-alert>
 
 <ngrx-code-example header="movies.store.ts">
+
+```ts
 @Injectable()
 export class MoviesStore extends ComponentStore<MoviesState> {
-  
   constructor() {
-    super({movies: []});
+    super({ movies: [] });
   }
 
-readonly addMovie = this.updater((state, movie: Movie) => ({
-movies: [...state.movies, movie],
-}));
+  readonly addMovie = this.updater((state, movie: Movie) => ({
+    movies: [...state.movies, movie],
+  }));
 }
+```
+
 </ngrx-code-example>
 
 Updater then can be called with the values imperatively or could take an Observable.
 
 <ngrx-code-example header="movies-page.component.ts">
+
+```ts
 @Component({
   template: `
     <button (click)="add('New Movie')">Add a Movie</button>
@@ -44,13 +49,14 @@ Updater then can be called with the values imperatively or could take an Observa
   providers: [MoviesStore],
 })
 export class MoviesPageComponent {
+  constructor(private readonly moviesStore: MoviesStore) {}
 
-constructor(private readonly moviesStore: MoviesStore) {}
+  add(movie: string) {
+    this.moviesStore.addMovie({ name: movie, id: generateId() });
+  }
+}
+```
 
-add(movie: string) {
-this.moviesStore.addMovie({ name: movie, id: generateId() });
-}
-}
 </ngrx-code-example>
 
 ## `setState` method
@@ -63,6 +69,8 @@ initialization is performed.
 The callback approach allows developers to change the state partially.
 
 <ngrx-code-example header="movies-page.component.ts">
+
+```ts
 @Component({
   template: `...`,
   providers: [ComponentStore],
@@ -72,24 +80,26 @@ export class MoviesPageComponent implements OnInit {
     private readonly componentStore: ComponentStore<MoviesState>
   ) {}
 
-ngOnInit() {
-this.componentStore.setState({movies: []});
-}
+  ngOnInit() {
+    this.componentStore.setState({ movies: [] });
+  }
 
-resetMovies() {
-// resets the State to empty array 👇
-this.componentStore.setState({movies: []});
-}
+  resetMovies() {
+    // resets the State to empty array 👇
+    this.componentStore.setState({ movies: [] });
+  }
 
-addMovie(movie: Movie) {
-this.componentStore.setState((state) => {
-return {
-...state,
-movies: [...state.movies, movie],
-};
-});
+  addMovie(movie: Movie) {
+    this.componentStore.setState((state) => {
+      return {
+        ...state,
+        movies: [...state.movies, movie],
+      };
+    });
+  }
 }
-}
+```
+
 </ngrx-code-example>
 
 ## `patchState` method
@@ -100,39 +110,46 @@ When the partial state is provided it patches the state with the provided value.
 
 When the partial updater is provided it patches the state with the value returned from the callback.
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
-**Note:** The state has to be initialized before any of `patchState` calls, otherwise "not initialized" error will be thrown.
+The state has to be initialized before any of `patchState` calls, otherwise "not initialized" error will be thrown.
 
-</div>
+</ngrx-docs-alert>
 
 <ngrx-code-example header="movies-page.component.ts">
+
+```ts
 interface MoviesState {
   movies: Movie[];
   selectedMovieId: string | null;
 }
 
 @Component({
-template: `...`,
-providers: [ComponentStore],
+  template: `...`,
+  providers: [ComponentStore],
 })
 export class MoviesPageComponent implements OnInit {
-constructor(
-private readonly componentStore: ComponentStore<MoviesState>
-) {}
+  constructor(
+    private readonly componentStore: ComponentStore<MoviesState>
+  ) {}
 
-ngOnInit() {
-this.componentStore.setState({movies: [], selectedMovieId: null});
-}
+  ngOnInit() {
+    this.componentStore.setState({
+      movies: [],
+      selectedMovieId: null,
+    });
+  }
 
-updateSelectedMovie(selectedMovieId: string) {
-this.componentStore.patchState({selectedMovieId});
-}
+  updateSelectedMovie(selectedMovieId: string) {
+    this.componentStore.patchState({ selectedMovieId });
+  }
 
-addMovie(movie: Movie) {
-this.componentStore.patchState((state) => ({
-movies: [...state.movies, movie]
-}));
+  addMovie(movie: Movie) {
+    this.componentStore.patchState((state) => ({
+      movies: [...state.movies, movie],
+    }));
+  }
 }
-}
+```
+
 </ngrx-code-example>

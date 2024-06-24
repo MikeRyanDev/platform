@@ -39,7 +39,9 @@ export class MoviesPageComponent {
   constructor(private movieService: MoviesService) {}
 
   ngOnInit() {
-    this.movieService.getAll().subscribe((movies) => (this.movies = movies));
+    this.movieService
+      .getAll()
+      .subscribe((movies) => (this.movies = movies));
   }
 }
 ```
@@ -86,7 +88,9 @@ Effects handle external data and interactions, allowing your services to be less
   `,
 })
 export class MoviesPageComponent {
-  movies$: Observable<Movie[]> = this.store.select((state) => state.movies);
+  movies$: Observable<Movie[]> = this.store.select(
+    (state) => state.movies
+  );
 
   constructor(private store: Store<{ movies: Movie[] }>) {}
 
@@ -112,11 +116,11 @@ Effects are injectable service classes with distinct parts:
 - Effects are subscribed to the `Store` observable.
 - Services are injected into effects to interact with external APIs and handle streams.
 
-<ngrx-alert type="help">
+<ngrx-docs-alert type="help">
 
 **Note:** Since NgRx v15.2, classes are not required to create effects. Learn more about functional effects [here](#functional-effects).
 
-</ngrx-alert>
+</ngrx-docs-alert>
 
 To show how you handle loading movies from the example above, let's look at `MoviesEffects`.
 
@@ -136,14 +140,20 @@ export class MoviesEffects {
       ofType('[Movies Page] Load Movies'),
       exhaustMap(() =>
         this.moviesService.getAll().pipe(
-          map((movies) => ({ type: '[Movies API] Movies Loaded Success', payload: movies })),
+          map((movies) => ({
+            type: '[Movies API] Movies Loaded Success',
+            payload: movies,
+          })),
           catchError(() => EMPTY)
         )
       )
     )
   );
 
-  constructor(private actions$: Actions, private moviesService: MoviesService) {}
+  constructor(
+    private actions$: Actions,
+    private moviesService: MoviesService
+  ) {}
 }
 ```
 
@@ -151,11 +161,11 @@ export class MoviesEffects {
 
 The `loadMovies$` effect is listening for all dispatched actions through the `Actions` stream, but is only interested in the `[Movies Page] Load Movies` event using the @ngrx/effects!ofType:function operator. The stream of actions is then flattened and mapped into a new observable using the `exhaustMap` operator. The `MoviesService#getAll()` method returns an observable that maps the movies to a new action on success, and currently returns an empty observable if an error occurs. The action is dispatched to the `Store` where it can be handled by reducers when a state change is needed. It's also important to [handle errors](#handling-errors) when dealing with observable streams so that the effects continue running.
 
-<ngrx-alert type="inform">
+<ngrx-docs-alert type="inform">
 
-**Note:** Event streams are not limited to dispatched actions, but can be _any_ observable that produces new actions, such as observables from the Angular Router, observables created from browser events, and other observable streams.
+Event streams are not limited to dispatched actions, but can be _any_ observable that produces new actions, such as observables from the Angular Router, observables created from browser events, and other observable streams.
 
-</ngrx-alert>
+</ngrx-docs-alert>
 
 ## Handling Errors
 
@@ -177,14 +187,22 @@ export class MoviesEffects {
       ofType('[Movies Page] Load Movies'),
       exhaustMap(() =>
         this.moviesService.getAll().pipe(
-          map((movies) => ({ type: '[Movies API] Movies Loaded Success', payload: movies })),
-          catchError(() => of({ type: '[Movies API] Movies Loaded Error' }))
+          map((movies) => ({
+            type: '[Movies API] Movies Loaded Success',
+            payload: movies,
+          })),
+          catchError(() =>
+            of({ type: '[Movies API] Movies Loaded Error' })
+          )
         )
       )
     )
   );
 
-  constructor(private actions$: Actions, private moviesService: MoviesService) {}
+  constructor(
+    private actions$: Actions,
+    private moviesService: MoviesService
+  ) {}
 }
 ```
 
@@ -210,13 +228,24 @@ import { ActorsPageActions } from './actors-page.actions';
 import { ActorsApiActions } from './actors-api.actions';
 
 export const loadActors = createEffect(
-  (actions$ = inject(Actions), actorsService = inject(ActorsService)) => {
+  (
+    actions$ = inject(Actions),
+    actorsService = inject(ActorsService)
+  ) => {
     return actions$.pipe(
       ofType(ActorsPageActions.opened),
       exhaustMap(() =>
         actorsService.getAll().pipe(
-          map((actors) => ActorsApiActions.actorsLoadedSuccess({ actors })),
-          catchError((error: { message: string }) => of(ActorsApiActions.actorsLoadedFailure({ errorMsg: error.message })))
+          map((actors) =>
+            ActorsApiActions.actorsLoadedSuccess({ actors })
+          ),
+          catchError((error: { message: string }) =>
+            of(
+              ActorsApiActions.actorsLoadedFailure({
+                errorMsg: error.message,
+              })
+            )
+          )
         )
       )
     );
@@ -237,11 +266,11 @@ export const displayErrorAlert = createEffect(
 
 </ngrx-code-example>
 
-<ngrx-alert type="inform">
+<ngrx-docs-alert type="inform">
 
 It's recommended to inject all dependencies as effect function arguments for easier testing. However, it's also possible to inject dependencies in the effect function body. In that case, the [`inject` function](https://angular.io/api/core/inject) must be called within the synchronous context.
 
-</ngrx-alert>
+</ngrx-docs-alert>
 
 ## Registering Root Effects
 
@@ -264,11 +293,11 @@ export class AppModule {}
 
 </ngrx-code-example>
 
-<ngrx-alert type="warn">
+<ngrx-docs-alert type="warn">
 
 The `EffectsModule.forRoot()` method must be added to your `AppModule` imports even if you don't register any root-level effects.
 
-</ngrx-alert>
+</ngrx-docs-alert>
 
 ### Using the Standalone API
 
@@ -286,17 +315,20 @@ import { MoviesEffects } from './effects/movies.effects';
 import * as actorsEffects from './effects/actors.effects';
 
 bootstrapApplication(AppComponent, {
-  providers: [provideStore(), provideEffects(MoviesEffects, actorsEffects)],
+  providers: [
+    provideStore(),
+    provideEffects(MoviesEffects, actorsEffects),
+  ],
 });
 ```
 
 </ngrx-code-example>
 
-<ngrx-alert type="inform">
+<ngrx-docs-alert type="inform">
 
 Effects start running **immediately** after instantiation to ensure they are listening for all relevant actions as soon as possible. Services used in root-level effects are **not** recommended to be used with services that are used with the `APP_INITIALIZER` token.
 
-</ngrx-alert>
+</ngrx-docs-alert>
 
 ## Registering Feature Effects
 
@@ -342,11 +374,11 @@ export const routes: Route[] = [
 
 </ngrx-code-example>
 
-<ngrx-alert type="inform">
+<ngrx-docs-alert type="inform">
 
-**Note:** Registering an effects class multiple times, either by `forRoot()`, `forFeature()`, or @ngrx/effects!provideEffects:function, (for example in different lazy loaded features) will not cause the effects to run multiple times. There is no functional difference between effects loaded by `root` and `feature`; the important difference between the functions is that `root` providers sets up the providers required for effects.
+Registering an effects class multiple times, either by `forRoot()`, `forFeature()`, or @ngrx/effects!provideEffects:function, (for example in different lazy loaded features) will not cause the effects to run multiple times. There is no functional difference between effects loaded by `root` and `feature`; the important difference between the functions is that `root` providers sets up the providers required for effects.
 
-</ngrx-alert>
+</ngrx-docs-alert>
 
 ## Alternative Way of Registering Effects
 
@@ -367,11 +399,11 @@ providers: [
 
 </ngrx-code-example>
 
-<ngrx-alert type="warn">
+<ngrx-docs-alert type="warn">
 
 The `EffectsModule.forFeature()` method or @ngrx/effects!provideEffects:function function must be added to the module imports/route config even if you only provide effects over token, and don't pass them through parameters. (Same goes for `EffectsModule.forRoot()`)
 
-</ngrx-alert>
+</ngrx-docs-alert>
 
 ## Standalone API in module-based apps
 
@@ -409,7 +441,10 @@ Let's look at an example of an action initiating a login request using an effect
 import { createAction, props } from '@ngrx/store';
 import { Credentials } from '../models/user';
 
-export const login = createAction('[Login Page] Login', props<{ credentials: Credentials }>());
+export const login = createAction(
+  '[Login Page] Login',
+  props<{ credentials: Credentials }>()
+);
 ```
 
 </ngrx-code-example>
@@ -433,13 +468,18 @@ export class AuthEffects {
       exhaustMap((action) =>
         this.authService.login(action.credentials).pipe(
           map((user) => AuthApiActions.loginSuccess({ user })),
-          catchError((error) => of(AuthApiActions.loginFailure({ error })))
+          catchError((error) =>
+            of(AuthApiActions.loginFailure({ error }))
+          )
         )
       )
     )
   );
 
-  constructor(private actions$: Actions, private authService: AuthService) {}
+  constructor(
+    private actions$: Actions,
+    private authService: AuthService
+  ) {}
 }
 ```
 
@@ -456,7 +496,12 @@ The example below shows the `addBookToCollectionSuccess$` effect displaying a di
 ```ts
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Actions, ofType, createEffect, concatLatestFrom } from '@ngrx/effects';
+import {
+  Actions,
+  ofType,
+  createEffect,
+  concatLatestFrom,
+} from '@ngrx/effects';
 import { tap } from 'rxjs/operators';
 import { CollectionApiActions } from '../actions';
 import * as fromBooks from '../reducers';
@@ -467,29 +512,36 @@ export class CollectionEffects {
     () =>
       this.actions$.pipe(
         ofType(CollectionApiActions.addBookSuccess),
-        concatLatestFrom((action) => this.store.select(fromBooks.getCollectionBookIds)),
+        concatLatestFrom((action) =>
+          this.store.select(fromBooks.getCollectionBookIds)
+        ),
         tap(([action, bookCollection]) => {
           if (bookCollection.length === 1) {
             window.alert('Congrats on adding your first book!');
           } else {
-            window.alert('You have added book number ' + bookCollection.length);
+            window.alert(
+              'You have added book number ' + bookCollection.length
+            );
           }
         })
       ),
     { dispatch: false }
   );
 
-  constructor(private actions$: Actions, private store: Store<fromBooks.State>) {}
+  constructor(
+    private actions$: Actions,
+    private store: Store<fromBooks.State>
+  ) {}
 }
 ```
 
 </ngrx-code-example>
 
-<ngrx-alert type="inform">
+<ngrx-docs-alert type="inform">
 
-**Note:** For performance reasons, use a flattening operator like `concatLatestFrom` to prevent the selector from firing until the correct action is dispatched.
+For performance reasons, use a flattening operator like `concatLatestFrom` to prevent the selector from firing until the correct action is dispatched.
 
-</ngrx-alert>
+</ngrx-docs-alert>
 
 To learn about testing effects that incorporate state, see the [Effects that use State](guide/effects/testing#effect-that-uses-state) section in the testing guide.
 
@@ -513,7 +565,11 @@ import { UserActivityService } from '../services/user-activity.service';
 export class UserActivityEffects {
   trackUserActivity$ = createEffect(
     () => {
-      return fromEvent(document, 'click').pipe(concatMap((event) => this.userActivityService.trackUserActivity(event)));
+      return fromEvent(document, 'click').pipe(
+        concatMap((event) =>
+          this.userActivityService.trackUserActivity(event)
+        )
+      );
     },
     { dispatch: false }
   );

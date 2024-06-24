@@ -24,11 +24,15 @@ You can still use multiple selectors from different feature states together.
 Examples of **incorrect** code for this rule:
 
 ```ts
-const customersFeatureState = createFeatureSelector<GlobalStore, CustomersFeatureState>('customers');
+const customersFeatureState = createFeatureSelector<
+  GlobalStore,
+  CustomersFeatureState
+>('customers');
 ```
 
 Examples of **correct** code for this rule:
 
 ```ts
-const customersFeatureState = createFeatureSelector<CustomersFeatureState>('customers');
+const customersFeatureState =
+  createFeatureSelector<CustomersFeatureState>('customers');
 ```

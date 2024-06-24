@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # EntityCollectionService
 
@@ -48,11 +48,11 @@ update(hero: Hero) { this.heroService.update(hero); }
 The component injects the NgRx Data `EntityCollectionServiceFactory` and
 creates an `EntityCollectionService` for `Hero` entities.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 We'll go inside the factory [later in this guide](#entitycollectionservicefactory).
 
-</div>
+</ngrx-docs-alert>
 
 ### Create the _EntityCollectionService_ as a class
 
@@ -76,11 +76,11 @@ Let your preferred style and app needs determine which creation technique you ch
 
 A `selector$` property is an _observable_ that emits when a _selected_ state property changes.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 Some folks refer to such properties as **state streams**.
 
-</div>
+</ngrx-docs-alert>
 
 The example component has two such properties that expose two `EntityCollectionService` _selector observables_: `filteredEntities$` and `loading$`.
 
@@ -93,12 +93,12 @@ The `loading$` _observable_ produces `true` while the
 It produces `false` when the server responds.
 The demo app subscribes to `loading$` so that it can turn a visual loading indicator on and off.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 These component and `EntityCollectionService` selector property names end in `'$'` which is a common convention for a property that returns an `Observable`.
 All _selector observable_ properties of an `EntityCollectionService` follow this convention.
 
-</div>
+</ngrx-docs-alert>
 
 #### The _selector observable_ versus the _selector function_
 
@@ -141,14 +141,14 @@ The cache-only command methods are longer verbs like "addManyToCache" and "remov
 and their names all contain the word "cache".
 They update the cached collection immediately (synchronously).
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 Most applications call the server commands because they want to query and save entity data.
 
 Apps rarely call the cache-only commands because direct updates to the entity collection
 are lost when the application shuts down.
 
-</div>
+</ngrx-docs-alert>
 
 Many `EntityCollectionService` command methods take a value.
 The value is _typed_ (often as `Hero`) so you won't make a mistake by passing in the wrong kind of value.

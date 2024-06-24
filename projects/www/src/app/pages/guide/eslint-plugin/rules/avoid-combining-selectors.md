@@ -25,7 +25,10 @@ Examples of **incorrect** code for this rule:
 
 ```ts
 export class Component {
-  vm$ = combineLatest(this.store.select(selectCustomers), this.store.select(selectOrders)).pipe(
+  vm$ = combineLatest(
+    this.store.select(selectCustomers),
+    this.store.select(selectOrders)
+  ).pipe(
     map(([customers, orders]) => {
       return customers.map((c) => {
         return {

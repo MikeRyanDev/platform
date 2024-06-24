@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # Entity Reducer
 
@@ -22,12 +22,12 @@ The reducer responds either to an [EntityCache-level action](#entity-cache-actio
 or to an `EntityAction` targeting an entity collection (the usual case).
 All other kinds of `Action` are ignored and the reducer simply returns the given `state`.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 The reducer filters specifically for the action's `entityType` property.
 It treats any action with an `entityType` property as an `EntityAction`.
 
-</div>
+</ngrx-docs-alert>
 
 The _entity reducer's_ primary job is to
 
@@ -77,13 +77,13 @@ They don't update the collection data (other than, perhaps, to flip the `loading
 
 Others add, update, and remove entities from the collection.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 Remember that _immutable objects_ are a core principle of the _redux/NgRx_ pattern.
 These reducers don't actually change the original collection or any of the objects in it.
 They make a copy of the collection and only update copies of the objects within the collection.
 
-</div>
+</ngrx-docs-alert>
 
 See the NgRx Entity [`EntityAdapter` collection methods](guide/entity/adapter#adapter-collection-methods) for a basic guide to the
 cache altering operations performed by the default _entity collection reducer_.
@@ -133,11 +133,11 @@ effectively re-initializing the entity cache to a known state.
 with those collections present in the action payload.
 It leaves the other current collections alone.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 See `entity-reducer.spec.ts` for examples of these actions.
 
-</div>
+</ngrx-docs-alert>
 
 These actions might be part of your plan to support offline scenarios or rollback changes to many collections at the same time.
 
@@ -150,13 +150,13 @@ Later, when relaunching the application, you could dispatch the `SET_ENTITY_CACH
 Or you could dispatch the `MERGE_ENTITY_CACHE` to rollback selected collections to a known state as
 in error-recovery or "what-if" scenarios.
 
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 **Important**: `MERGE_ENTITY_CACHE` _replaces_ the currently cached collections with the entity collections in its payload.
 It does not _merge_ the payload collection entities into the existing collections as the name might imply.
 May reconsider and do that in the future.
 
-</div>
+</ngrx-docs-alert>
 
 If you want to create and reduce additional, cache-wide actions,
 consider the _EntityCache MetaReducer_, described in the next section.
@@ -174,11 +174,11 @@ It calls it with a _state_ object and an _action_.
 The MetaReducer can do what it wants with the state and action.
 It can log the action, handle the action on its own, delegate to the incoming reducer, post-process the updated state, or all of the above.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 Remember that the actions themselves are immutable. Do not change the action!
 
-</div>
+</ngrx-docs-alert>
 
 Like every reducer, the state passed to a MetaReducer's reducer is only
 the section of the store that is within the reducer's scope.
@@ -202,12 +202,12 @@ An _EntityCache MetaReducer_ reducer must satisfy three requirements:
 1.  return synchronously (no waiting for server responses).
 1.  never mutate the original action; clone it to change it.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 We intend to explain how in a documentation update.
 For now, see the NgRx Data `entity-data.module.spec.ts` for examples.
 
-</div>
+</ngrx-docs-alert>
 
 ### Entity Collection _MetaReducers_
 
@@ -264,9 +264,9 @@ adding it to its registry.
 
 All `EntityActions` dispatched to the store pass through this wrapper on their way in and out of the entity-specific reducers.
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 We intend to explain how to create and provide _entity collection MetaReducers_ in a documentation update.
 For now, see the `entity-reducer.spec.ts` for examples.
 
-</div>
+</ngrx-docs-alert>

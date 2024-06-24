@@ -10,11 +10,11 @@ The example below shows how to provide a selector for the top level `router` key
 
 Usage:
 
-<div class="alert is-helpful">
+<ngrx-docs-alert type="help">
 
 You can see the full example at StackBlitz: <live-example name="router-store-selectors"></live-example>
 
-</div>
+</ngrx-docs-alert>
 
 ## Creating a Selector for A Single Entity With Id As Route Param
 
@@ -58,28 +58,38 @@ Using `selectRouteParam{s}` will get the `matched` param but not the `urlPath` p
 If all params in the URL Tree need to be extracted (both `urlPath` and `matched`), the following custom selector can be used. It accumulates params of all the segments in the matched route:
 
 <ngrx-code-example>
+
+```ts
 import { Params } from '@angular/router';
 import { createSelector } from '@ngrx/store';
 
-export const selectRouteNestedParams = createSelector(selectRouter, (router) => {
-let currentRoute = router?.state?.root;
-let params: Params = {};
-while (currentRoute?.firstChild) {
-currentRoute = currentRoute.firstChild;
-params = {
-...params,
-...currentRoute.params,
-};
-}
-return params;
-});
+export const selectRouteNestedParams = createSelector(
+  selectRouter,
+  (router) => {
+    let currentRoute = router?.state?.root;
+    let params: Params = {};
+    while (currentRoute?.firstChild) {
+      currentRoute = currentRoute.firstChild;
+      params = {
+        ...params,
+        ...currentRoute.params,
+      };
+    }
+    return params;
+  }
+);
 
 export const selectRouteNestedParam = (param: string) =>
-createSelector(selectRouteNestedParams, (params) => params &amp;&amp; params[param]);
+  createSelector(
+    selectRouteNestedParams,
+    (params) => params && params[param]
+  );
+```
+
 </ngrx-code-example>
 
-<div class="alert is-important">
+<ngrx-docs-alert type="inform">
 
 Beware of using this accumulation technique when two params with the same name exist in the route (e.g. `my/:route/:id/with/another/:id`). Only the rightmost value is accessible because leftmost values are overwritten by the rightmost one in the traversal.
 
-</div>
+</ngrx-docs-alert>

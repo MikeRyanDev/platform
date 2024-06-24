@@ -76,10 +76,12 @@ features: {
 ## Example Object as provided in module imports
 
 <ngrx-code-example header="app.module.ts">
+
+```ts
 @NgModule({
-  ...
+  /* ... */
   imports: [
-    ...
+    /* ... */
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: false,
@@ -91,6 +93,8 @@ features: {
       }
     })
   ],
-  ...
+  /* ... */
 })
+```
+
 </ngrx-code-example>

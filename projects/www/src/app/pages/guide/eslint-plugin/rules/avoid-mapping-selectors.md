@@ -23,7 +23,9 @@ Examples of **incorrect** code for this rule:
 
 ```ts
 export class Component {
-  name$ = this.store.select(selectLoggedInUser).pipe(map((user) => ({ name: user.name })));
+  name$ = this.store
+    .select(selectLoggedInUser)
+    .pipe(map((user) => ({ name: user.name })));
 }
 ```
 

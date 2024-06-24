@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # Extension Points
 
@@ -134,7 +134,8 @@ Many apps use `@ngrx/data` in conjunction with @ngrx/store including manually wr
 import * as fromCat from './cat.reducer';
 import { Owner } from '~/app/models';
 
-export const ownerSelectors = new EntitySelectorsFactory().create<Owner>('Owner');
+export const ownerSelectors =
+  new EntitySelectorsFactory().create<Owner>('Owner');
 
 export interface State {
   cat: fromCat.State;
@@ -146,13 +147,17 @@ export const reducers: ActionReducerMap<State> = {
 
 export const selectCatState = (state: State) => state.cat;
 
-export const { selectAll: selectAllCats } = fromCat.adapter.getSelectors(selectCatState);
+export const { selectAll: selectAllCats } =
+  fromCat.adapter.getSelectors(selectCatState);
 
-export const selectedCatsWithOwners = createSelector(selectAllCats, ownerSelectors.selectEntityMap, (cats, ownerEntityMap) =>
-  cats.map((c) => ({
-    ...c,
-    owner: ownerEntityMap[c.owner],
-  }))
+export const selectedCatsWithOwners = createSelector(
+  selectAllCats,
+  ownerSelectors.selectEntityMap,
+  (cats, ownerEntityMap) =>
+    cats.map((c) => ({
+      ...c,
+      owner: ownerEntityMap[c.owner],
+    }))
 );
 ```
 
@@ -176,7 +181,12 @@ The implementation simply overrides `DefaultHttpUrlGenerator.getResourceUrls(str
 
 ```ts
 import { Injectable } from '@angular/core';
-import { DefaultHttpUrlGenerator, HttpResourceUrls, normalizeRoot, Pluralizer } from '@ngrx/data';
+import {
+  DefaultHttpUrlGenerator,
+  HttpResourceUrls,
+  normalizeRoot,
+  Pluralizer,
+} from '@ngrx/data';
 
 @Injectable()
 export class PluralHttpUrlGenerator extends DefaultHttpUrlGenerator {
@@ -184,11 +194,16 @@ export class PluralHttpUrlGenerator extends DefaultHttpUrlGenerator {
     super(myPluralizer);
   }
 
-  protected getResourceUrls(entityName: string, root: string): HttpResourceUrls {
+  protected getResourceUrls(
+    entityName: string,
+    root: string
+  ): HttpResourceUrls {
     let resourceUrls = this.knownHttpResourceUrls[entityName];
     if (!resourceUrls) {
       const nRoot = normalizeRoot(root);
-      const url = `${nRoot}/${this.myPluralizer.pluralize(entityName)}/`.toLowerCase();
+      const url = `${nRoot}/${this.myPluralizer.pluralize(
+        entityName
+      )}/`.toLowerCase();
       resourceUrls = {
         entityResourceUrl: url,
         collectionResourceUrl: url,
@@ -240,13 +255,22 @@ describe('PluralHttpUrlGenerator', () => {
   });
 
   it('should pluralize collection resource URLs', () => {
-    const url = generator.collectionResource('bar', 'https://foo.com/api');
+    const url = generator.collectionResource(
+      'bar',
+      'https://foo.com/api'
+    );
     expect(url).toBe('https://foo.com/api/bars/');
   });
 
   it('should cache results (needed for 100% branch coverage)', () => {
-    const url = generator.entityResource('bar', 'https://foo.com/api');
-    const cachedUrl = generator.entityResource('bar', 'https://foo.com/api');
+    const url = generator.entityResource(
+      'bar',
+      'https://foo.com/api'
+    );
+    const cachedUrl = generator.entityResource(
+      'bar',
+      'https://foo.com/api'
+    );
     expect(cachedUrl).toBe(url);
   });
 });

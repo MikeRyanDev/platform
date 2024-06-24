@@ -1,9 +1,9 @@
-<div class="alert is-critical">
+<ngrx-docs-alert type="error">
 
 The `@ngrx/data` package is in <a href="https://github.com/ngrx/platform/issues/4011" target="_blank">maintenance mode</a>.
 Changes to this package are limited to critical bug fixes.
 
-</div>
+</ngrx-docs-alert>
 
 # Architecture overview
 
@@ -18,7 +18,7 @@ The following diagram illustrates the journey of a persistence `EntityAction`
 such as `QUERY_ALL` for the `Hero` entity type.
 
 <figure>
-  <img src="generated/images/guide/data/action-flow.png" alt="flow diagram">
+  <img src="images/guide/data/action-flow.png" alt="flow diagram">
 </figure>
 
 1.  The view/component calls [`EntityCollectionService.getAll()`](guide/data/entity-services), which dispatches the hero's `QUERY_ALL` [EntityAction](guide/data/entity-actions) to the store.

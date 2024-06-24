@@ -1,15 +1,28 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatInput, MatPrefix } from '@angular/material/input';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SymbolChipComponent } from '@ngrx-io/app/components/docs/symbol-chip.component';
 import { ReferenceService } from '@ngrx-io/app/reference/reference.service';
 import { MinimizedApiMemberSummary } from '@ngrx-io/shared';
 
 @Component({
   selector: 'ngrx-reference-index-page',
+  standalone: true,
+  imports: [
+    SymbolChipComponent,
+    MatFormField,
+    MatInput,
+    MatPrefix,
+    MatIcon,
+    MatSlideToggle,
+  ],
   template: `
     <div class="controls">
       <h2>API Reference</h2>
+      <!--<div class="deprecated">
+        <mat-slide-toggle>Hide Deprecated</mat-slide-toggle>
+      </div>-->
       <div class="filter">
         <mat-icon matPrefix>search</mat-icon>
         <input
@@ -40,8 +53,8 @@ import { MinimizedApiMemberSummary } from '@ngrx-io/shared';
       .controls {
         display: flex;
         width: 100%;
-        height: 80px;
-        padding: 8px 0 16px;
+        height: 84px;
+        padding: 8px 0 24px;
         justify-content: space-between;
         align-items: flex-end;
         border-bottom: 1px solid rgba(255, 255, 255, 0.12);
@@ -90,8 +103,6 @@ import { MinimizedApiMemberSummary } from '@ngrx-io/shared';
       }
     `,
   ],
-  standalone: true,
-  imports: [SymbolChipComponent, MatFormField, MatInput, MatPrefix, MatIcon],
 })
 export default class ApiIndexPageComponent {
   referenceService = inject(ReferenceService);
