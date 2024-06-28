@@ -208,17 +208,16 @@ export function signalStoreFeature<
   Prettify<EmptyFeatureResult & Input>,
   MergeFeatureResults<[F1, F2, F3, F4, F5, F6]>
 >;
-
 export function signalStoreFeature(
-  featureOrInput: SignalStoreFeature | Partial<SignalStoreFeatureResult>,
-  ...restFeatures: SignalStoreFeature[]
-): SignalStoreFeature {
+  featureOrInput: any,
+  ...restFeatures: any[]
+): any {
   const features =
     typeof featureOrInput === 'function'
       ? [featureOrInput, ...restFeatures]
       : restFeatures;
 
-  return (inputStore) =>
+  return (inputStore: any) =>
     features.reduce((store, feature) => feature(store), inputStore);
 }
 

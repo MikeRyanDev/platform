@@ -1,30 +1,31 @@
 import { excludeKeys } from './helpers';
+import { toProtectedSignalStore } from './inner-signal-store';
 import {
   EmptyFeatureResult,
-  InnerSignalStore,
+  ProtectedSignalStore,
   SignalsDictionary,
   SignalStoreFeature,
   SignalStoreFeatureResult,
-  StateSignals,
 } from './signal-store-models';
-import { Prettify } from './ts-helpers';
 
 export function withComputed<
   Input extends SignalStoreFeatureResult,
   ComputedSignals extends SignalsDictionary
 >(
   signalsFactory: (
-    store: Prettify<StateSignals<Input['state']> & Input['computed']>
+    store: ProtectedSignalStore<
+      Input['state'],
+      Input['computed'],
+      Input['methods'],
+      Input['events']
+    >
   ) => ComputedSignals
 ): SignalStoreFeature<
   Input,
   EmptyFeatureResult & { computed: ComputedSignals }
 > {
   return (store) => {
-    const computedSignals = signalsFactory({
-      ...store.stateSignals,
-      ...store.computedSignals,
-    });
+    const computedSignals = signalsFactory(toProtectedSignalStore(store));
     const computedSignalsKeys = Object.keys(computedSignals);
     const stateSignals = excludeKeys(store.stateSignals, computedSignalsKeys);
     const methods = excludeKeys(store.methods, computedSignalsKeys);
@@ -34,6 +35,6 @@ export function withComputed<
       stateSignals,
       computedSignals: { ...store.computedSignals, ...computedSignals },
       methods,
-    } as InnerSignalStore<Record<string, unknown>, ComputedSignals>;
+    };
   };
 }

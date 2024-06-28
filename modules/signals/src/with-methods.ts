@@ -1,36 +1,30 @@
 import { excludeKeys } from './helpers';
-import { STATE_SIGNAL, StateSignal } from './state-signal';
 import {
   EmptyFeatureResult,
   InnerSignalStore,
   MethodsDictionary,
+  ProtectedSignalStore,
   SignalsDictionary,
   SignalStoreFeature,
   SignalStoreFeatureResult,
-  StateSignals,
 } from './signal-store-models';
-import { Prettify } from './ts-helpers';
+import { toProtectedSignalStore } from './inner-signal-store';
 
 export function withMethods<
   Input extends SignalStoreFeatureResult,
   Methods extends MethodsDictionary
 >(
   methodsFactory: (
-    store: Prettify<
-      StateSignals<Input['state']> &
-        Input['computed'] &
-        Input['methods'] &
-        StateSignal<Prettify<Input['state']>>
+    store: ProtectedSignalStore<
+      Input['state'],
+      Input['computed'],
+      Input['methods'],
+      Input['events']
     >
   ) => Methods
 ): SignalStoreFeature<Input, EmptyFeatureResult & { methods: Methods }> {
   return (store) => {
-    const methods = methodsFactory({
-      [STATE_SIGNAL]: store[STATE_SIGNAL],
-      ...store.stateSignals,
-      ...store.computedSignals,
-      ...store.methods,
-    });
+    const methods = methodsFactory(toProtectedSignalStore(store));
     const methodsKeys = Object.keys(methods);
     const stateSignals = excludeKeys(store.stateSignals, methodsKeys);
     const computedSignals = excludeKeys(store.computedSignals, methodsKeys);

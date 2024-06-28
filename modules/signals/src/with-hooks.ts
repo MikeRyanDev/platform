@@ -1,27 +1,26 @@
-import { STATE_SIGNAL, StateSignal } from './state-signal';
 import {
   EmptyFeatureResult,
+  ProtectedSignalStore,
   SignalStoreFeature,
   SignalStoreFeatureResult,
-  StateSignals,
 } from './signal-store-models';
-import { Prettify } from './ts-helpers';
+import { toProtectedSignalStore } from './inner-signal-store';
 
 type HookFn<Input extends SignalStoreFeatureResult> = (
-  store: Prettify<
-    StateSignals<Input['state']> &
-      Input['computed'] &
-      Input['methods'] &
-      StateSignal<Prettify<Input['state']>>
+  store: ProtectedSignalStore<
+    Input['state'],
+    Input['computed'],
+    Input['methods'],
+    Input['events']
   >
 ) => void;
 
 type HooksFactory<Input extends SignalStoreFeatureResult> = (
-  store: Prettify<
-    StateSignals<Input['state']> &
-      Input['computed'] &
-      Input['methods'] &
-      StateSignal<Prettify<Input['state']>>
+  store: ProtectedSignalStore<
+    Input['state'],
+    Input['computed'],
+    Input['methods'],
+    Input['events']
   >
 ) => {
   onInit?: () => void;
@@ -45,15 +44,10 @@ export function withHooks<Input extends SignalStoreFeatureResult>(
     | HooksFactory<Input>
 ): SignalStoreFeature<Input, EmptyFeatureResult> {
   return (store) => {
-    const storeProps = {
-      [STATE_SIGNAL]: store[STATE_SIGNAL],
-      ...store.stateSignals,
-      ...store.computedSignals,
-      ...store.methods,
-    };
+    const reflectedStore = toProtectedSignalStore(store);
     const hooks =
       typeof hooksOrFactory === 'function'
-        ? hooksOrFactory(storeProps)
+        ? hooksOrFactory(reflectedStore)
         : hooksOrFactory;
     const createHook = (name: keyof typeof hooks) => {
       const hook = hooks[name];
@@ -65,7 +59,7 @@ export function withHooks<Input extends SignalStoreFeatureResult>(
               currentHook();
             }
 
-            hook(storeProps);
+            hook(reflectedStore);
           }
         : currentHook;
     };

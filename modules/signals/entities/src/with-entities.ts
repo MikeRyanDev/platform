@@ -1,4 +1,4 @@
-import { computed, Signal } from '@angular/core';
+import { computed, Signal, isSignal } from '@angular/core';
 import {
   SignalStoreFeature,
   signalStoreFeature,
@@ -16,32 +16,35 @@ import {
 import { getEntityStateKeys } from './helpers';
 
 export function withEntities<Entity>(): SignalStoreFeature<
-  { state: {}; computed: {}; methods: {} },
+  { state: {}; computed: {}; methods: {}; events: {} },
   {
     state: EntityState<Entity>;
     computed: EntityComputed<Entity>;
     methods: {};
+    events: {};
   }
 >;
 export function withEntities<Entity, Collection extends string>(config: {
   entity: Entity;
   collection: Collection;
 }): SignalStoreFeature<
-  { state: {}; computed: {}; methods: {} },
+  { state: {}; computed: {}; methods: {}; events: {} },
   {
     state: NamedEntityState<Entity, Collection>;
     computed: NamedEntityComputed<Entity, Collection>;
     methods: {};
+    events: {};
   }
 >;
 export function withEntities<Entity>(config: {
   entity: Entity;
 }): SignalStoreFeature<
-  { state: {}; computed: {}; methods: {} },
+  { state: {}; computed: {}; methods: {}; events: {} },
   {
     state: EntityState<Entity>;
     computed: EntityComputed<Entity>;
     methods: {};
+    events: {};
   }
 >;
 export function withEntities<Entity>(config?: {
@@ -55,13 +58,21 @@ export function withEntities<Entity>(config?: {
       [entityMapKey]: {},
       [idsKey]: [],
     }),
-    withComputed((store: Record<string, Signal<unknown>>) => ({
+    withComputed((store) => ({
       [entitiesKey]: computed(() => {
-        const entityMap = store[entityMapKey]() as EntityMap<Entity>;
-        const ids = store[idsKey]() as EntityId[];
+        const entityMap = getSignal<EntityMap<Entity>>(store, entityMapKey)();
+        const ids = getSignal<EntityId[]>(store, idsKey)();
 
         return ids.map((id) => entityMap[id]);
       }),
     }))
   );
+}
+
+function getSignal<T>(source: any, key: string): Signal<T> {
+  if (key in source && isSignal(source[key])) {
+    return source[key];
+  }
+
+  throw new Error(`Signal ${key} is not defined`);
 }

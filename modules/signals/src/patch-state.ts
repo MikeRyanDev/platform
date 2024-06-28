@@ -1,4 +1,8 @@
-import { STATE_SIGNAL, StateSignal } from './state-signal';
+import {
+  STATE_SOURCE,
+  PatchStateCommand,
+  StateSource,
+} from './signal-store-models';
 import { Prettify } from './ts-helpers';
 
 export type PartialStateUpdater<State extends object> = (
@@ -6,18 +10,15 @@ export type PartialStateUpdater<State extends object> = (
 ) => Partial<State>;
 
 export function patchState<State extends object>(
-  stateSignal: StateSignal<State>,
+  stateSignal: StateSource<State>,
   ...updaters: Array<
     Partial<Prettify<State>> | PartialStateUpdater<Prettify<State>>
   >
 ): void {
-  stateSignal[STATE_SIGNAL].update((currentState) =>
-    updaters.reduce(
-      (nextState: State, updater) => ({
-        ...nextState,
-        ...(typeof updater === 'function' ? updater(nextState) : updater),
-      }),
-      currentState
-    )
-  );
+  const command: PatchStateCommand<Prettify<State>> = {
+    type: '@@patch-state',
+    updaters,
+  };
+
+  stateSignal[STATE_SOURCE].dispatcher.next(command);
 }
