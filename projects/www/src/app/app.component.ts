@@ -6,6 +6,7 @@ import { MarkdownSymbolLinkComponent } from './components/docs/markdown-symbol-l
 import { AlertComponent } from './components/docs/alert.component';
 import { CodeExampleComponent } from './components/docs/code-example.component';
 import { StackblitzComponent } from './components/docs/stackblitz.component';
+import { FooterComponent } from './components/footer.component';
 
 @Component({
   selector: 'www-root',
@@ -17,12 +18,12 @@ import { StackblitzComponent } from './components/docs/stackblitz.component';
     AlertComponent,
     CodeExampleComponent,
     StackblitzComponent,
+    FooterComponent,
   ],
   template: `
     <ngrx-menu></ngrx-menu>
-    <div class="content">
-      <router-outlet></router-outlet>
-    </div>
+    <router-outlet></router-outlet>
+    <ngrx-footer></ngrx-footer>
   `,
   styles: [
     `

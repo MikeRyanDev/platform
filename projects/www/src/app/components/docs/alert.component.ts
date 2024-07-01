@@ -45,8 +45,8 @@ export type AlertType = 'inform' | 'warn' | 'error' | 'help';
       }
 
       :host(.help) {
-        border-color: rgba(1, 89, 66, 1);
-        background-color: rgba(1, 89, 66, 0.12);
+        border-color: rgba(255, 172, 230, 0.72);
+        background-color: rgba(255, 172, 230, 0.08);
       }
 
       :host + h2 {

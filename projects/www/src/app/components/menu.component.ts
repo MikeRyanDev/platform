@@ -14,11 +14,11 @@ import { GuideMenuService } from '../services/guide-menu.service';
       NgRx
     </a>
     <hr />
-    <a routerLink="/learn" class="menu-link">
+    <a routerLink="/learn" routerLinkActive="active" class="menu-link">
       <mat-icon>school</mat-icon>
       Learn
     </a>
-    <a href="" class="menu-link">
+    <a routerLink="/workshops" routerLinkActive="active" class="menu-link">
       <mat-icon>co_present</mat-icon>
       Workshops
     </a>
@@ -26,7 +26,7 @@ import { GuideMenuService } from '../services/guide-menu.service';
       <mat-icon>description</mat-icon>
       API Reference
     </a>
-    <a href="" class="menu-link">
+    <a routerLink="/support" routerLinkActive="active" class="menu-link">
       <mat-icon>help</mat-icon>
       Support
     </a>
